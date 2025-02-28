@@ -1,7 +1,8 @@
-const mongoose = require('mongoose');
+import mongoose from "mongoose";
+
 
 const connectMongo=()=>{
-    mongoose.connect(process.env.DATABASE_URL,()=>{
+    mongoose.connect(process.env.DATABASE_URL).then(()=>{
         console.log('Connected to MongoDB');
     })
 }

@@ -1,0 +1,16 @@
+<div class="w-dvw min-h-10/12 flex">
+      <div class="bg-gray-100  min-w-1/6  ">
+        <div class="flex flex-col gap-10  list-none p-10 items-center w-full text-center">
+          <li class="cursor-pointer hover:underline   p-3 w-full" routerLink="/dashboard/sessions">Challenge Sessions</li>
+          <li  class="cursor-pointer hover:underline p-3 w-full" routerLink="/dashboard/projects" >Projects</li>
+          <li  class="cursor-pointer hover:underline p-3 w-full" routerLink="/dashboard/interviews">Interviews</li>
+          <li  class="cursor-pointer hover:underline p-3 w-full" routerLink="/dashboard/reports">Reports</li>
+
+        </div>
+      </div>
+      <div class="w-5/6 ">
+        <router-outlet>
+
+        </router-outlet>
+      </div>
+</div>
