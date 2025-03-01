@@ -6,6 +6,9 @@ const createInterview = async (req, res) => {
     try {
         const data = req.body
         const interview = await interviewModel.create(data)
+        if (!interview) return res.status(500).json({ message: "Error creating interview" })
+
+        return res.status(201).json({ message: "Interview created", data: interview })
     } catch (error) {
         console.log(error)
         return res.status(500).json({ message: "Server Error" })
@@ -14,7 +17,7 @@ const createInterview = async (req, res) => {
 
 const getAllInterviews = async (req, res) => {
     try {
-        const interviews = await interviewModel.find({})
+        const interviews = await interviewModel.find({}).populate('sessions')
         return res.json(interviews)
     } catch (error) {
         console.log(error)
@@ -25,8 +28,10 @@ const getAllInterviews = async (req, res) => {
 const getInterview = async (req, res) => {
     try {
         const { id } = req.params
-        const interview = await interviewModel.findById(id)
+        const interview = await interviewModel.findById(id).populate({path:'sessions',populate:{path:'project'}})
         if (!interview) return res.status(404).json({ message: "Interview not found" })
+
+        return res.json(interview)
     } catch (error) {
         console.log(error)
         return res.status(500).json({ message: "Server Error" })
@@ -39,6 +44,8 @@ const updateInterview = async (req, res) => {
         const data = req.body
         const interview = await interviewModel.findByIdAndUpdate(id, data, { new: true })
         if (!interview) return res.status(404).json({ message: "Interview not found" })
+
+        return res.status(201).json({ message: "Interview updated", data: interview })
     } catch (error) {
        console.log(error)
         return res.status(500).json({ message: "Server Error" })

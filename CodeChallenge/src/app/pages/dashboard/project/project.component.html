@@ -40,7 +40,7 @@
                    {{project?.skills.join(' ,')}}
                </td>
                <td class="px-6 py-4">
-                   {{project?.url}}
+                 <a [href]="project?.url" class="text-blue-500" target="_blank">{{project?.url}}</a>
                </td>
 
                <td class="px-6 py-4 flex gap-2">

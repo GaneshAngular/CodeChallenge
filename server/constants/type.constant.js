@@ -1,4 +1,4 @@
-const SESSION_STATUS=['inactive',"In-Progess","Completed"]
+const SESSION_STATUS=['inactive',"in-irogess","completed"]
 const SCORE_TYPE=["Not Attempted", "Partial Solution", "Completed", "Outstanding"]
 export{
     SESSION_STATUS,

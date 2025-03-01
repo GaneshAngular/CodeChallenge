@@ -21,7 +21,7 @@ export class SessionService {
   deleteSession(params:HttpParams) {
     return this.httpService.delete(SESSION_API.api, params);
   }
-  getSessions(params:HttpParams) {
+  getSessions(params?:HttpParams) {
     return this.httpService.get(SESSION_API.api, params);
   }
 }

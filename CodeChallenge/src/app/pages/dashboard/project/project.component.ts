@@ -18,7 +18,7 @@ export class ProjectComponent implements OnInit {
   projectService=inject(ProjectService)
   projectForm=new FormGroup({
     title:new FormControl('',[Validators.required,Validators.pattern(/^[a-zA-Z\s]{2,}$/)]),
-    skills:new FormControl('',[Validators.required,Validators.pattern(/^[a-zA-Z\,]{2,}$/)]),
+    skills:new FormControl('',[Validators.required,Validators.pattern(/^[a-zA-Z\,\s]{2,}$/)]),
     url:new FormControl('',[Validators.required])
   })
   ngOnInit(): void {

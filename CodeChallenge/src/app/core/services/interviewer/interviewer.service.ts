@@ -14,6 +14,9 @@ export class InterviewerService {
   getInterviewes(params?:HttpParams) {
     return this.httpService.get(INTERVIEW_API.api,params);
   }
+  getInterview(id:string){
+    return this.httpService.get(INTERVIEW_API.api+"/"+id)
+  }
   createInterview(data:any){
     return this.httpService.post(INTERVIEW_API.api,data)
   }

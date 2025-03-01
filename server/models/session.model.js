@@ -2,9 +2,9 @@ import mongoose from "mongoose";
 import { SESSION_STATUS } from "../constants/type.constant.js";
 
 const sessionSchema=new mongoose.Schema({
-    name:{type:String, required:true},
+    title:{type:String, required:true},
     project:{type:mongoose.Schema.Types.ObjectId,ref:'project',required:true},
-    status:{type:String,required:true,enum:SESSION_STATUS,default:'Not Assigned'},
+    status:{type:String,enum:SESSION_STATUS,default:'Inactive'},
     timetaken:{type:Number},
     score:{type:String},
     createdAt:{type:Date,default:Date.now}

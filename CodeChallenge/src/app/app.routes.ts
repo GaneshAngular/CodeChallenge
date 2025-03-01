@@ -19,4 +19,7 @@ export const routes: Routes = [{
       loadComponent:()=> import('./pages/dashboard/project/project.component').then(i=>i.ProjectComponent)
     }
   ]
+},{
+  path:'live/interview/:id',
+  loadComponent: () => import('./pages/live-interview/live-interview.component').then(m => m.LiveInterviewComponent)
 }];
