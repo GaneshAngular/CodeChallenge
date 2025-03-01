@@ -1,6 +1,15 @@
 import { Routes } from '@angular/router';
 
-export const routes: Routes = [{
+export const routes: Routes = [
+  { path:'api',
+    loadComponent:()=>import('./pages/layout/layout.component').then(t=>t.LayoutComponent),
+    children:[
+      {
+         path:'',
+         redirectTo:'dashboard',
+         pathMatch:'full'
+      },
+     {
   path: 'dashboard',
   loadComponent: () => import('./pages/dashboard/dashboard/dashboard.component').then(m => m.DashboardComponent),
   children:[
@@ -19,6 +28,9 @@ export const routes: Routes = [{
       loadComponent:()=> import('./pages/dashboard/project/project.component').then(i=>i.ProjectComponent)
     }
   ]
+}]},{
+  path:'live/challenge/:id',
+  loadComponent:()=>import('./pages/live-challenge/live-challenge.component').then(i=>i.LiveChallengeComponent)
 },{
   path:'live/interview/:id',
   loadComponent: () => import('./pages/live-interview/live-interview.component').then(m => m.LiveInterviewComponent)

@@ -12,9 +12,9 @@
               {{session.title}}
             </div>
             <div class="text-sm text-gray-500">
-             StackBlitzUrl: <a class="text-blue-700" target="_blank" [href]="session?.project?.url">{{session?.project?.url}}</a>
+             StackBlitzUrl: <a class="text-blue-700" target="_blank" >{{codechallengeUrl+"/"+session?.project?._id}}</a>
             </div>
-            <div><button type="button" (click)="copyLink(session?.project?.url)"  class="w-15 h-6 cursor-pointer bg-gray-300">Copy</button></div>
+            <div><button type="button" (click)="copyLink(codechallengeUrl+'/'+session?.project?._id)"  class="w-15 h-6 cursor-pointer bg-gray-300">Copy</button></div>
           </div>
         }
       </div>

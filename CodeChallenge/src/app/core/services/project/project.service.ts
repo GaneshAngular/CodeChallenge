@@ -15,6 +15,10 @@ export class ProjectService {
     return this.httpService.get(PROJECT_API.api);
   }
 
+  getProject(id:string){
+    return this.httpService.get(PROJECT_API.api+"/"+id)
+  }
+
   createProject(data:any) {
       return this.httpService.post(PROJECT_API.api, data);
   }
