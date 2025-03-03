@@ -35,8 +35,8 @@ export const routes: Routes = [
   loadComponent: () => import('./pages/login/login.component').then(m => m.LoginComponent)
 }]},{
   path:'live/challenge/:id',
-  component:LiveChallengeComponent,
-  // loadComponent:()=>import('./pages/live-challenge/live-challenge.component').then(i=>i.LiveChallengeComponent),
+  // component:LiveChallengeComponent,
+  loadComponent:()=>import('./pages/live-challenge/live-challenge.component').then(i=>i.LiveChallengeComponent),
   canDeactivate:[restrictChallengePageGuard],
 },{
   path:'live/interview/:id',
