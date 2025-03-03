@@ -1,5 +1,6 @@
 const INTERVIEW_API={
-   api:'/api/interview'
+   api:'/api/interview',
+   updateSession:'/api/interview/session'
 }
 const SESSION_API={
    api:'/api/session'

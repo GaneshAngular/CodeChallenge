@@ -20,6 +20,9 @@ export class InterviewerService {
   createInterview(data:any){
     return this.httpService.post(INTERVIEW_API.api,data)
   }
+  updateSession(data:any,params:HttpParams){
+     return this.httpService.put(INTERVIEW_API.updateSession,data,params)
+  }
   updateInterview(data:any,params:HttpParams){
      return this.httpService.put(INTERVIEW_API.api,data,params)
   }

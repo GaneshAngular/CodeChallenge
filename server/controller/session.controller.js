@@ -10,7 +10,7 @@ const createSession=async(req,res)=>{
         const session=await  sessionModel.create(data)
         if(!session) return res.status(500).json({message:"Error creating session"})
 
-        return res.status(201).json({message:"Session created"})
+        return res.status(201).json({message:"Session created",data:session})
     } catch (error) {
         console.log(error)
         return res.status(500).json({message:"Server Error"})

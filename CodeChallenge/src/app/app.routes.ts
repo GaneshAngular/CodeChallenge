@@ -1,4 +1,6 @@
 import { Routes } from '@angular/router';
+import { restrictChallengePageGuard } from './core/guards/challengePage/restrict-challenge-page.guard';
+import { LiveChallengeComponent } from './pages/live-challenge/live-challenge.component';
 
 export const routes: Routes = [
   { path:'api',
@@ -28,9 +30,14 @@ export const routes: Routes = [
       loadComponent:()=> import('./pages/dashboard/project/project.component').then(i=>i.ProjectComponent)
     }
   ]
+},{
+  path:'login',
+  loadComponent: () => import('./pages/login/login.component').then(m => m.LoginComponent)
 }]},{
   path:'live/challenge/:id',
-  loadComponent:()=>import('./pages/live-challenge/live-challenge.component').then(i=>i.LiveChallengeComponent)
+  component:LiveChallengeComponent,
+  // loadComponent:()=>import('./pages/live-challenge/live-challenge.component').then(i=>i.LiveChallengeComponent),
+  canDeactivate:[restrictChallengePageGuard],
 },{
   path:'live/interview/:id',
   loadComponent: () => import('./pages/live-interview/live-interview.component').then(m => m.LiveInterviewComponent)

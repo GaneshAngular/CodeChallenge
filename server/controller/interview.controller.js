@@ -51,6 +51,19 @@ const updateInterview = async (req, res) => {
         return res.status(500).json({ message: "Server Error" })
     }
 }
+const updateInterviewSessions=async(req,res)=>{
+    try {
+    const { id } = req.query
+    const data = req.body
+    const interview = await interviewModel.findByIdAndUpdate(id, { $push: { sessions: data.sessions } }, { new: true })
+    if (!interview) return res.status(404).json({ message: "Interview not found" })
+
+    return res.status(201).json({ message: "Interview sessions updated", data: interview })
+    } catch (error) {
+    console.log(error)
+    return res.status(500).json({ message: "Server Error" })
+    }
+}
 
 const deleteInterview=async(req, res) => {
    try {
@@ -66,4 +79,4 @@ const deleteInterview=async(req, res) => {
 
 }
 
-export{createInterview, deleteInterview, updateInterview, getInterview,getAllInterviews}
+export{createInterview, deleteInterview, updateInterview, getInterview,getAllInterviews,updateInterviewSessions}

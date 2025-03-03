@@ -82,7 +82,7 @@ sheduleInterview(){
   })
 }
 startInterview(id:string){
-   if(!confirm("Are you sure you want to start")) return 
+   if(!confirm("Are you sure you want to start")) return
  this.router.navigate(['/live/interview/'+id])
 }
 
@@ -91,6 +91,6 @@ startInterview(id:string){
     this.interviewModal=!this.interviewModal;
   }
   generateSessionTitles(sessions:any){
-    return sessions.map((int:any)=>int.title).join(",")
+    return sessions.map((int:any)=>int.title).join(" , ")
   }
 }
