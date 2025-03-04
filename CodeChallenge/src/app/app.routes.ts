@@ -1,6 +1,6 @@
 import { Routes } from '@angular/router';
 import { restrictChallengePageGuard } from './core/guards/challengePage/restrict-challenge-page.guard';
-import { LiveChallengeComponent } from './pages/live-challenge/live-challenge.component';
+
 
 export const routes: Routes = [
   { path:'api',
@@ -33,7 +33,12 @@ export const routes: Routes = [
 },{
   path:'login',
   loadComponent: () => import('./pages/login/login.component').then(m => m.LoginComponent)
-}]},{
+}]},
+// ,{
+//   path:'live/challenge/expired',
+//   loadComponent: () => import('./pages/session-end/session-end.component').then(m => m.SessionEndComponent)
+// },
+{
   path:'live/challenge/:id',
   // component:LiveChallengeComponent,
   loadComponent:()=>import('./pages/live-challenge/live-challenge.component').then(i=>i.LiveChallengeComponent),
@@ -41,4 +46,16 @@ export const routes: Routes = [
 },{
   path:'live/interview/:id',
   loadComponent: () => import('./pages/live-interview/live-interview.component').then(m => m.LiveInterviewComponent)
-}];
+},{
+  path:'response/:message',
+  loadComponent: () => import('./pages/session-end/session-end.component').then(m => m.SessionEndComponent)
+},{
+  path:'notFound',
+  loadComponent:()=>import('./pages/not-found-404/not-found-404.component').then(m=>m.NotFound404Component)
+}
+,{
+  path:'**',
+   redirectTo:'/notFound',
+  pathMatch:'full'
+}
+];

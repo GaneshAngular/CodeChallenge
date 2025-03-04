@@ -39,10 +39,7 @@ document.addEventListener('paste', (event) => event.preventDefault());
 
      const url=this.router.url.split('/')
      const id:string=url.pop()||''
-     this.interviewService.getInterview(id).subscribe((res:any)=>{
-       this.interview=res
-       this.loadProjects()
-     })
+     this.loadInterview(id)
 
   }
 
@@ -56,9 +53,13 @@ document.addEventListener('paste', (event) => event.preventDefault());
     })
  }
 
-  loadInterview(){
-        this.interviewService.getInterview(this.interview?._id).subscribe((res:any)=>{
+  loadInterview(id:string){
+        this.interviewService.getInterview(id).subscribe((res:any)=>{
           this.interview=res
+       this.loadProjects()
+
+        },(err:any)=>{
+          this.router.navigate(['/notFound'])
         })
   }
 
@@ -70,7 +71,7 @@ document.addEventListener('paste', (event) => event.preventDefault());
       this.toggleModal()
       const params=new HttpParams().set('id',this.interview._id)
       this.interviewService.updateSession({sessions:[res.data._id]},params).subscribe((res:any)=>{
-        this.loadInterview()
+        this.loadInterview(this.interview._id)
       })
       this.sessionForm.reset()
     })

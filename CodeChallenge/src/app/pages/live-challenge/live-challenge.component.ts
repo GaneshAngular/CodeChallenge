@@ -9,6 +9,9 @@ import {
 import { Router } from '@angular/router';
 import { ProjectService } from '../../core/services/project/project.service';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
+import { CanDeactivatePage } from '../../core/guards/challengePage/restrict-challenge-page.guard';
+import { SessionService } from '../../core/services/session/session.service';
+import { HttpParams } from '@angular/common/http';
 
 @Component({
   selector: 'app-live-challenge',
@@ -16,10 +19,12 @@ import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
   templateUrl: './live-challenge.component.html',
   styleUrl: './live-challenge.component.css',
 })
-export class LiveChallengeComponent implements OnInit, AfterViewInit {
-  hasUnsavedChanges: boolean = false;
+export class LiveChallengeComponent implements OnInit, AfterViewInit,CanDeactivatePage {
+  hasUnsavedChanges: boolean = true;
   projectUrl: SafeResourceUrl = '';
+  activeSession:any
   projectService = inject(ProjectService);
+  sessionService=inject(SessionService)
   router = inject(Router);
   sanitizer = inject(DomSanitizer);
 
@@ -27,8 +32,13 @@ export class LiveChallengeComponent implements OnInit, AfterViewInit {
 
   ngOnInit(): void {
     const id: string = this.router.url.split('/').pop() || '';
-    this.projectService.getProject(id).subscribe((res: any) => {
-      this.projectUrl = this.sanitizer.bypassSecurityTrustResourceUrl(res.url);
+
+    this.sessionService.getSession(id).subscribe((res: any) => {
+         this.activeSession=res
+         if(this.activeSession.status=='completed') this.router.navigate(['/response/ResponseSubmited'])
+      this.projectUrl = this.sanitizer.bypassSecurityTrustResourceUrl(res.project.url);
+    },(err:any)=>{
+      this.router.navigate(['/notFound'])
     });
   }
 
@@ -46,9 +56,20 @@ export class LiveChallengeComponent implements OnInit, AfterViewInit {
     };
   }
 
+  submitChallenge(){
+    if(!confirm('sure to submit challenge')) return
+
+    const params=new HttpParams().set('id',this.activeSession?._id)
+     this.sessionService.updateSession({status:'completed'},params).subscribe((res:any)=>{
+      alert(res.message)
+      this.router.navigate(['/response/Thank You'])
+     })
+
+  }
+
   // ✅ Add this method for the CanDeactivate guard
   canDeactivate(): boolean {
-    console.log('🚀 canDeactivate() called in LiveChallengeComponent'); // Debugging log
-    return confirm('Are you sure you want to leave? Unsaved changes may be lost.');
+     if(this.activeSession.status=='completed') return true
+    return window.confirm('Are you sure you want to leave? Unsaved changes may be lost.');
   }
 }
