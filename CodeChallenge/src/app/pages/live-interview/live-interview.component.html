@@ -32,7 +32,7 @@
               </select>
             </div>
             <div>
-              {{session?.status!=='completed'?"Not Started":session?.status}}
+              {{session?.status=='inactive'?"Not Started":session?.status}}
             </div>
             <div>
               <button type="button" (click)="(session)" class="p-1 w-full cursor-pointer bg-green-400 rounded-md ">Submit</button>

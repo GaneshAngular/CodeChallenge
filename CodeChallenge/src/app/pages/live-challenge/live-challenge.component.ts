@@ -37,9 +37,17 @@ export class LiveChallengeComponent implements OnInit, AfterViewInit,CanDeactiva
          this.activeSession=res
          if(this.activeSession.status=='completed') this.router.navigate(['/response/ResponseSubmited'])
       this.projectUrl = this.sanitizer.bypassSecurityTrustResourceUrl(res.project.url);
+    this.updateSession(id)
     },(err:any)=>{
       this.router.navigate(['/notFound'])
     });
+  }
+
+  updateSession(id:string){
+    const params=new HttpParams().set('id',id)
+    this.sessionService.updateSession({status:'in-progess'},params).subscribe((res:any)=>{
+
+    })
   }
 
   ngAfterViewInit() {
