@@ -98,6 +98,15 @@ updateChallengeSession($event:any,id:string){
 
   }
 
+  updatedScore($event:any,id:string){
+     if(!confirm("Are you sure to update")) return
+    const params=new HttpParams().set('id',id)
+      this.sessionService.updateSession({score:$event.target.value},params).subscribe((res:any)=>{
+        alert(res.message)
+        this.loadInterview(this.interview._id)
+      })
+  }
+
   endSession(){
     if(!confirm('Are you sure to end session?')) return
     const params=new HttpParams().set('id',this.interview._id)
