@@ -32,7 +32,7 @@ const getSession=async (req, res) => {
         try {
              const {id}=req.params
              const session=await sessionModel.findById(id).populate('project')
-             console.log(session)
+             
              if(!session) return res.status(404).json({message:"Session not found"})
              return res.status(200).json(session)
         } catch (error) {
