@@ -32,8 +32,19 @@
               </select>
             </div>
             <div>
-              {{session?.status=='inactive'?"Not Started":session?.status}}
+              <select name="status" id="status" (change)="updateChallengeSession($event,session?._id)">
+                 @for (item of challengeStatus; track $index) {
+                  @if(session?.status==item){
+                    <option selected value="{{item}}">{{item}}</option>
+                  }@else {
+                    <option value="{{item}}">{{item}}</option>
+                  }
+                 }
+              </select>
             </div>
+            <!-- <div>
+              {{session?.status=='inactive'?"Not Started":session?.status}}
+            </div> -->
             <div>
               <button type="button" (click)="(session)" class="p-1 w-full cursor-pointer bg-green-400 rounded-md ">Submit</button>
             </div>

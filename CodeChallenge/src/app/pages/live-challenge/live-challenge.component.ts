@@ -12,6 +12,7 @@ import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import { CanDeactivatePage } from '../../core/guards/challengePage/restrict-challenge-page.guard';
 import { SessionService } from '../../core/services/session/session.service';
 import { HttpParams } from '@angular/common/http';
+import { SocketIoService } from '../../core/services/socket.io/socket.io.service';
 
 @Component({
   selector: 'app-live-challenge',
@@ -27,20 +28,31 @@ export class LiveChallengeComponent implements OnInit, AfterViewInit,CanDeactiva
   sessionService=inject(SessionService)
   router = inject(Router);
   sanitizer = inject(DomSanitizer);
-
+  socketService=inject(SocketIoService)
   @ViewChild('editor', { static: false }) iframe!: ElementRef<HTMLIFrameElement>;
 
   ngOnInit(): void {
     const id: string = this.router.url.split('/').pop() || '';
 
+    this.loadChallengeSession(id);
+   this.socketService.getResponse("update-interview").subscribe(response=>{
+     this.loadChallengeSession(id)
+   })
+
+  }
+
+  loadChallengeSession(id:string){
     this.sessionService.getSession(id).subscribe((res: any) => {
-         this.activeSession=res
-         if(this.activeSession.status=='completed') this.router.navigate(['/response/ResponseSubmited'])
-      this.projectUrl = this.sanitizer.bypassSecurityTrustResourceUrl(res.project.url);
-    this.updateSession(id)
-    },(err:any)=>{
-      this.router.navigate(['/notFound'])
-    });
+      this.activeSession=res
+      if(this.activeSession.status=='completed'){ this.router.navigate(['/response/ResponseSubmited'])
+}else{
+
+  this.projectUrl = this.sanitizer.bypassSecurityTrustResourceUrl(res.project.url);
+  // this.updateSession(id)
+}
+ },(err:any)=>{
+   this.router.navigate(['/notFound'])
+ });
   }
 
   updateSession(id:string){
@@ -69,6 +81,7 @@ export class LiveChallengeComponent implements OnInit, AfterViewInit,CanDeactiva
 
     const params=new HttpParams().set('id',this.activeSession?._id)
      this.sessionService.updateSession({status:'completed'},params).subscribe((res:any)=>{
+
       alert(res.message)
       this.router.navigate(['/response/Thank You'])
      })

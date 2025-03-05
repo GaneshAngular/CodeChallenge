@@ -8,6 +8,8 @@ import { ProjectService } from '../../core/services/project/project.service';
 import { FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { SessionService } from '../../core/services/session/session.service';
 import { HttpParams } from '@angular/common/http';
+import { io } from 'socket.io-client';
+import { SocketIoService } from '../../core/services/socket.io/socket.io.service';
 
 @Component({
   selector: 'app-live-interview',
@@ -21,11 +23,13 @@ export class LiveInterviewComponent implements OnInit {
    interview:any
    projects:any
    challengeScore=CHALLENGE_SCORE
+   challengeStatus=['in-progress','completed']
    sessionModel=false
    codechallengeUrl=CODE_CHALLENGE_URL
    interviewService=inject(InterviewerService)
    projectService=inject(ProjectService)
    sessionService=inject(SessionService)
+   socketService=inject(SocketIoService)
 
   sessionForm=new FormGroup({
       title:new FormControl('',[Validators.required,Validators.pattern(/^[a-zA-Z0-9\s]{2,}$/)]),
@@ -37,9 +41,13 @@ document.addEventListener('cut', (event) => event.preventDefault());
 document.addEventListener('paste', (event) => event.preventDefault());
  // Disable right-click
 
-     const url=this.router.url.split('/')
-     const id:string=url.pop()||''
-     this.loadInterview(id)
+
+    const url=this.router.url.split('/')
+    const id:string=url.pop()||''
+    this.loadInterview(id)
+    this.socketService.getResponse('update-interview').subscribe((data:any)=>{
+    this.loadInterview(id)
+    })
 
   }
 
@@ -50,8 +58,20 @@ document.addEventListener('paste', (event) => event.preventDefault());
   loadProjects(){
     this.projectService.getProjects().subscribe((res:any)=>{
       this.projects=res
+      this.socketService.sendData('date',"Hello from client")
     })
  }
+
+updateChallengeSession($event:any,id:string){
+  if(!confirm('Are you sure to complete the challenge?')) return
+  const params=new HttpParams().set('id',id)
+  this.sessionService.updateSession({status:$event.target.value},params).subscribe((res:any)=>{
+    alert(res.message)
+    this.loadInterview(this.interview._id)
+  })
+}
+
+
 
   loadInterview(id:string){
         this.interviewService.getInterview(id).subscribe((res:any)=>{

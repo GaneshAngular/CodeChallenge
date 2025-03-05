@@ -1,4 +1,5 @@
 import sessionModel from "../models/session.model.js"
+import { io } from "../services/socket.io.service.js"
 
 
 
@@ -48,10 +49,11 @@ const updateSession=async(req,res)=>{
         const session=await sessionModel.findByIdAndUpdate(id,data)
         if(!session) return res.status(404).json({message:"Session not found"})
 
-        const newSession=await sessionModel.findById(id)
-        if(!newSession) return res.status(500).json({message:"Error updating session"})
-
-        return res.status(201).json({message:"Session updated",data:newSession})
+        // const newSession=await sessionModel.findById(id)
+        // if(!newSession) return res.status(500).json({message:"Error updating session"})
+         
+         io.emit('update-interview',"Session updated")
+        return res.status(201).json({message:"Session updated",data:session})
     } catch (error) {
         console.log(error)
         return res.status(500).json({message:"Server Error"})

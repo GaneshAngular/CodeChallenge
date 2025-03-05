@@ -1,4 +1,5 @@
 import interviewModel from "../models/interview.model.js"
+import { io } from "../services/socket.io.service.js"
 
 
 
@@ -30,7 +31,7 @@ const getInterview = async (req, res) => {
         const { id } = req.params
         const interview = await interviewModel.findById(id).populate({path:'sessions',populate:{path:'project'}})
         if (!interview) return res.status(404).json({ message: "Interview not found" })
-
+        
         return res.json(interview)
     } catch (error) {
         console.log(error)
@@ -44,7 +45,7 @@ const updateInterview = async (req, res) => {
         const data = req.body
         const interview = await interviewModel.findByIdAndUpdate(id, data, { new: true })
         if (!interview) return res.status(404).json({ message: "Interview not found" })
-
+           io.emit('update-interview', interview)
         return res.status(201).json({ message: "Interview updated", data: interview })
     } catch (error) {
        console.log(error)
