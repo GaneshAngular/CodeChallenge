@@ -20,9 +20,16 @@
               {{session.title}}
             </div>
             <div class="text-sm text-gray-500 !text-wrap w-full">
-             StackBlitzUrl: <a class="text-blue-700 text-wa" target="_blank" >{{codechallengeUrl+"/"+session?._id}}</a>
+             StackBlitzUrl: <a class="text-blue-700 cursor-pointer" target="_blank" [href]="codechallengeUrl+'/'+session?._id" >{{codechallengeUrl+"/"+session?._id}}</a>
              <div><button type="button" (click)="copyLink(codechallengeUrl+'/'+session?._id)"  class="w-15 h-6 cursor-pointer bg-blue-300">Copy</button></div>
             </div>
+            @if (session?.status=='completed') {
+
+              <div>
+                <span for="time" class="text-lg">Time Taken:{{session?.timetaken |time}} MIN</span>
+
+              </div>
+            }
             <div>
               <label for="score" class="text-lg">Score:</label>
               <select name="score" class="p-1 border border-gray-400 rounded-md outline-none" id="score" (change)="updatedScore($event,session?._id)">
@@ -31,8 +38,8 @@
                 }
               </select>
             </div>
-            <div>
-              <select name="status" id="status" (change)="updateChallengeSession($event,session?._id)">
+            <div><label for="status">Status:</label>
+              <select name="status" id="status" class="border border-gray-500 p-1 rounded" (change)="updateChallengeSession($event,session?._id)">
                  @for (item of challengeStatus; track $index) {
                   @if(session?.status==item){
                     <option selected value="{{item}}">{{item}}</option>
@@ -45,9 +52,9 @@
             <!-- <div>
               {{session?.status=='inactive'?"Not Started":session?.status}}
             </div> -->
-            <div>
+            <!-- <div>
               <button type="button" (click)="(session)" class="p-1 w-full cursor-pointer bg-green-400 rounded-md ">Submit</button>
-            </div>
+            </div> -->
           </div>
         }
       </div>

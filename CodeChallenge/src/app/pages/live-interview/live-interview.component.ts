@@ -10,10 +10,11 @@ import { SessionService } from '../../core/services/session/session.service';
 import { HttpParams } from '@angular/common/http';
 import { io } from 'socket.io-client';
 import { SocketIoService } from '../../core/services/socket.io/socket.io.service';
+import { TimePipe } from '../../shared/pipes/timeconverter/time.pipe';
 
 @Component({
   selector: 'app-live-interview',
-  imports: [CommonModule,FormsModule,ReactiveFormsModule],
+  imports: [CommonModule,FormsModule,ReactiveFormsModule,TimePipe],
 templateUrl: './live-interview.component.html',
   styleUrl: './live-interview.component.css'
 })
