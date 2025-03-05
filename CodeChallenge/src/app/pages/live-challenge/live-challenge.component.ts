@@ -2,6 +2,7 @@ import {
   AfterViewInit,
   Component,
   ElementRef,
+  OnDestroy,
   OnInit,
   ViewChild,
   inject,
@@ -13,10 +14,13 @@ import { CanDeactivatePage } from '../../core/guards/challengePage/restrict-chal
 import { SessionService } from '../../core/services/session/session.service';
 import { HttpParams } from '@angular/common/http';
 import { SocketIoService } from '../../core/services/socket.io/socket.io.service';
+import { DatePipe } from '@angular/common';
+import { TimePipe } from '../../shared/pipes/timeconverter/time.pipe';
 
 @Component({
   selector: 'app-live-challenge',
   standalone: true,
+  imports:[TimePipe],
   templateUrl: './live-challenge.component.html',
   styleUrl: './live-challenge.component.css',
 })
@@ -24,6 +28,9 @@ export class LiveChallengeComponent implements OnInit, AfterViewInit,CanDeactiva
   hasUnsavedChanges: boolean = true;
   projectUrl: SafeResourceUrl = '';
   activeSession:any
+  time:number=0
+  timerInterval:any
+  warningCount:number=0
   projectService = inject(ProjectService);
   sessionService=inject(SessionService)
   router = inject(Router);
@@ -33,11 +40,12 @@ export class LiveChallengeComponent implements OnInit, AfterViewInit,CanDeactiva
 
   ngOnInit(): void {
     const id: string = this.router.url.split('/').pop() || '';
-
+     this.warningCount=1
     this.loadChallengeSession(id);
    this.socketService.getResponse("update-interview").subscribe(response=>{
      this.loadChallengeSession(id)
    })
+
 
   }
 
@@ -63,6 +71,7 @@ export class LiveChallengeComponent implements OnInit, AfterViewInit,CanDeactiva
   }
 
   ngAfterViewInit() {
+
     this.iframe.nativeElement.onload = () => {
       const iframeDoc = this.iframe.nativeElement.contentDocument;
       if (iframeDoc) {
@@ -74,18 +83,29 @@ export class LiveChallengeComponent implements OnInit, AfterViewInit,CanDeactiva
         );
       }
     };
+    // document.addEventListener("visibilitychange", this.preventPageChange);
+      this.timerInterval=setInterval(()=>{
+        this.time++
+        console.log(this.time)
+       },1000)
+  }
+
+  preventPageChange(){
+      if(document.hidden){
+       alert("hellololo")
+          // this.submitChallenge()
+      }
   }
 
   submitChallenge(){
     if(!confirm('sure to submit challenge')) return
 
     const params=new HttpParams().set('id',this.activeSession?._id)
-     this.sessionService.updateSession({status:'completed'},params).subscribe((res:any)=>{
-
+     this.sessionService.updateSession({status:'completed',timetaken:this.time},params).subscribe((res:any)=>{
       alert(res.message)
       this.router.navigate(['/response/Thank You'])
      })
-
+    clearInterval(this.timerInterval)
   }
 
   // ✅ Add this method for the CanDeactivate guard
@@ -93,4 +113,12 @@ export class LiveChallengeComponent implements OnInit, AfterViewInit,CanDeactiva
      if(this.activeSession.status=='completed') return true
     return window.confirm('Are you sure you want to leave? Unsaved changes may be lost.');
   }
+
+  //  ngOnDestroy(): void {
+  //   window.removeEventListener("blur", this.preventPageChange);
+
+  //  }
+
 }
+
+
