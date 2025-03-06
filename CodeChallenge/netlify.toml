@@ -1,0 +1,9 @@
+[build]
+  base = "CodeChallenge"
+  command = "ng build --configuration=production"
+  publish = "frontend/dist/code-challenge"
+
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
