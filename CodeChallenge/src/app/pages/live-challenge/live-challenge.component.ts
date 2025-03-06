@@ -2,6 +2,7 @@ import {
   AfterViewInit,
   Component,
   ElementRef,
+  HostListener,
   OnDestroy,
   OnInit,
   ViewChild,
@@ -20,57 +21,72 @@ import { TimePipe } from '../../shared/pipes/timeconverter/time.pipe';
 @Component({
   selector: 'app-live-challenge',
   standalone: true,
-  imports:[TimePipe],
+  imports: [TimePipe],
   templateUrl: './live-challenge.component.html',
   styleUrl: './live-challenge.component.css',
 })
-export class LiveChallengeComponent implements OnInit, AfterViewInit,CanDeactivatePage {
+export class LiveChallengeComponent
+  implements OnInit, AfterViewInit, CanDeactivatePage, OnDestroy
+{
   hasUnsavedChanges: boolean = true;
   projectUrl: SafeResourceUrl = '';
-  activeSession:any
-  time:number=0
-  timerInterval:any
-  warningCount:number=0
+  activeSession: any;
+  time: number = 0;
+  timerInterval: any;
+  warningCount: number = 0;
   projectService = inject(ProjectService);
-  sessionService=inject(SessionService)
+  sessionService = inject(SessionService);
   router = inject(Router);
   sanitizer = inject(DomSanitizer);
-  socketService=inject(SocketIoService)
-  @ViewChild('editor', { static: false }) iframe!: ElementRef<HTMLIFrameElement>;
+  socketService = inject(SocketIoService);
+  @ViewChild('editor', { static: false })
+  iframe!: ElementRef<HTMLIFrameElement>;
+
+  @HostListener('window:beforeunload', ['$event'])
+  onBeforeUnload(event: BeforeUnloadEvent) {
+    event.preventDefault();
+    event.returnValue = ''; // This triggers the browser's confirmation dialog
+  }
 
   ngOnInit(): void {
     const id: string = this.router.url.split('/').pop() || '';
-     this.warningCount=1
+    this.warningCount = 1;
     this.loadChallengeSession(id);
-   this.socketService.getResponse("update-interview").subscribe(response=>{
-     this.loadChallengeSession(id)
-   })
-
-
+    this.socketService.getResponse('update-interview').subscribe((response) => {
+      this.loadChallengeSession(id);
+    });
   }
 
-  loadChallengeSession(id:string){
-    this.sessionService.getSession(id).subscribe((res: any) => {
-      this.activeSession=res
-      if(this.activeSession.status=='completed'){ this.router.navigate(['/response/ResponseSubmited'])
-}else{
-
-  this.projectUrl = this.sanitizer.bypassSecurityTrustResourceUrl(res.project.url);
-  // this.updateSession(id)
-}
- },(err:any)=>{
-   this.router.navigate(['/notFound'])
- });
+  loadChallengeSession(id: string) {
+    this.sessionService.getSession(id).subscribe(
+      (res: any) => {
+        this.activeSession = res;
+        if (this.activeSession.status == 'completed') {
+          this.router.navigate(['/response/ResponseSubmited']);
+        } else {
+          this.projectUrl = this.sanitizer.bypassSecurityTrustResourceUrl(
+            res.project.url
+          );
+          // this.updateSession(id)
+        }
+      },
+      (err: any) => {
+        this.router.navigate(['/notFound']);
+      }
+    );
   }
 
-  updateSession(id:string){
-    const params=new HttpParams().set('id',id)
-    this.sessionService.updateSession({status:'in-progess'},params).subscribe((res:any)=>{
-
-    })
+  updateSession(id: string) {
+    const params = new HttpParams().set('id', id);
+    this.sessionService
+      .updateSession({ status: 'in-progess' }, params)
+      .subscribe((res: any) => {});
   }
 
   ngAfterViewInit() {
+    window.addEventListener('beforeunload', (event: any) =>
+      event.preventDefault()
+    );
 
     this.iframe.nativeElement.onload = () => {
       const iframeDoc = this.iframe.nativeElement.contentDocument;
@@ -84,41 +100,44 @@ export class LiveChallengeComponent implements OnInit, AfterViewInit,CanDeactiva
       }
     };
     // document.addEventListener("visibilitychange", this.preventPageChange);
-      this.timerInterval=setInterval(()=>{
-        this.time++
-        console.log(this.time)
-       },1000)
+    this.timerInterval = setInterval(() => {
+      this.time++;
+      console.log(this.time);
+    }, 1000);
   }
 
-  preventPageChange(){
-      if(document.hidden){
-       alert("hellololo")
-          // this.submitChallenge()
-      }
-  }
+  // preventPageChange() {
+  //   if (document.hidden) {
+  //     alert('hellololo');
+  //     // this.submitChallenge()
+  //   }
+  // }
 
-  submitChallenge(){
-    if(!confirm('sure to submit challenge')) return
+  submitChallenge() {
+    if (!confirm('sure to submit challenge')) return;
 
-    const params=new HttpParams().set('id',this.activeSession?._id)
-     this.sessionService.updateSession({status:'completed',timetaken:this.time},params).subscribe((res:any)=>{
-      alert(res.message)
-      this.router.navigate(['/response/Thank You'])
-     })
-    clearInterval(this.timerInterval)
+    const params = new HttpParams().set('id', this.activeSession?._id);
+    this.sessionService
+      .updateSession({ status: 'completed', timetaken: this.time }, params)
+      .subscribe((res: any) => {
+        alert(res.message);
+        this.loadChallengeSession(this.activeSession._id);
+        this.router.navigate(['/response/Thank You']);
+      });
+    clearInterval(this.timerInterval);
   }
 
   // ✅ Add this method for the CanDeactivate guard
   canDeactivate(): boolean {
-     if(this.activeSession.status=='completed') return true
-    return window.confirm('Are you sure you want to leave? Unsaved changes may be lost.');
+    if (this.activeSession.status == 'completed') return true;
+    return window.confirm(
+      'Are you sure you want to leave? Unsaved changes may be lost.'
+    );  
   }
 
-  //  ngOnDestroy(): void {
-  //   window.removeEventListener("blur", this.preventPageChange);
-
-  //  }
-
+  ngOnDestroy(): void {
+    window.removeEventListener('beforeunload', (event: any) =>
+      event.preventDefault()
+    );
+  }
 }
-
-
