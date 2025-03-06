@@ -2,7 +2,11 @@ import { Routes } from '@angular/router';
 import { restrictChallengePageGuard } from './core/guards/challengePage/restrict-challenge-page.guard';
 
 
-export const routes: Routes = [
+export const routes: Routes = [{
+  path: '',
+  redirectTo: 'api',
+  pathMatch: 'full'
+},
   { path:'api',
     loadComponent:()=>import('./pages/layout/layout.component').then(t=>t.LayoutComponent),
     children:[
