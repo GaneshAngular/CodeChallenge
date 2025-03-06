@@ -1,5 +1,0 @@
-{
-  "version": 2,
-  "public": "dist/code-challenge",
-  "routes": [{ "src": "/(.*)", "dest": "/index.html" }]
-}
