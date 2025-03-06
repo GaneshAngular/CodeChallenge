@@ -1,7 +1,4 @@
-[build]
-  base = "CodeChallenge"
-  command = "ng build --configuration=production"
-  publish = "CodeChallenge/dist/code-challenge"
+
 
 [[redirects]]
   from = "/*"
