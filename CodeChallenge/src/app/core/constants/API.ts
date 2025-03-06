@@ -6,7 +6,7 @@ const SESSION_API={
    api:'/api/session'
 }
 
-const CODE_CHALLENGE_URL='http://localhost:4200/live/challenge'
+const CODE_CHALLENGE_URL=location.origin+'/live/challenge'
 
 const PROJECT_API={
   api:'/api/project'
@@ -17,7 +17,7 @@ const AUTH_API={
   logout:'/api/auth/logout'
 }
 
-const SERVER_URL='http://localhost:8080'
+const SERVER_URL='https://codechallenge-9dq3.onrender.com'
 
 export {INTERVIEW_API, SESSION_API, PROJECT_API,AUTH_API,SERVER_URL,CODE_CHALLENGE_URL}
 
