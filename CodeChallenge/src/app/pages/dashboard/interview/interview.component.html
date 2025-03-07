@@ -4,7 +4,7 @@
  </div>
 <div class="flex w-2/6 justify-between items-center my-7">
   <div>
-    <input type="text" class="outline-none border border-gray-400 rounded-md " placeholder="search">
+    <input type="text" class="outline-none border border-gray-400 rounded-md " [(ngModel)]="searchTitle" placeholder="search title" (keyup)="loadInterviews()">
   </div>
   <div>
     <button class="w-20 h-10 rounded-full bg-blue-400" (click)="toggleInterviewModal()">Shedule</button>
@@ -107,4 +107,8 @@
     </div>
 </div>
 
+<div class="my-4 mx-auto">
+
+  <app-pagination [page]="page" [totalPages]="totalPages"(sendPage)="changePage($event)" ></app-pagination>
+</div>
 </div>

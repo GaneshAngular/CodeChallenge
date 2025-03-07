@@ -17,13 +17,33 @@ const createInterview = async (req, res) => {
 }
 
 const getAllInterviews = async (req, res) => {
+    const page = parseInt(req.query.page) || 1;  
+    const limit = parseInt(req.query.limit) || 10;  
+    const skip = (page - 1) * limit;
+    const searchTitle = req.query.title ? { candidateName: { $regex: req.query.title, $options: "i" } } : {};
+    
     try {
-        const interviews = await interviewModel.find({}).populate('sessions')
-        return res.json(interviews)
+        // Get total count of filtered results
+        const totalPages = await interviewModel.countDocuments(searchTitle);
+    
+        // Fetch paginated results
+        const interviews = await interviewModel.find(searchTitle)
+            .skip(skip)
+            .limit(limit)
+            .populate('sessions');
+    
+        return res.json({
+            interviews,
+            totalPages,
+            totalPages: Math.ceil(totalPages / limit),
+            currentPage: page
+        });
+    
     } catch (error) {
-        console.log(error)
-        return res.status(500).json({ message: "Server Error" })
+        console.error(error);
+        return res.status(500).json({ message: "Server Error" });
     }
+    
 }
 
 const getInterview = async (req, res) => {

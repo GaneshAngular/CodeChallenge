@@ -19,14 +19,42 @@ const createSession=async(req,res)=>{
 }
 
 const getSessions=async(req,res)=>{
+    const page = req.query.page ? parseInt(req.query.page) : null;
+    const limit = req.query.limit ? parseInt(req.query.limit) : null;
+    const skip = page && limit ? (page - 1) * limit : 0;
+    const searchQuery = req.query.title
+      ? { sessionName: { $regex: req.query.title, $options: "i" } }
+      : {};
+    
     try {
-        const sessions=await sessionModel.find({}).populate('project')
-        if(sessions.length===0) return res.status(404).json({message:"No sessions found"})
-        return res.status(200).json(sessions)
+        // Get total count of filtered results
+        const totalItems = await sessionModel.countDocuments(searchQuery);
+    
+        // Fetch all data if no pagination params are provided
+        let query = sessionModel.find(searchQuery).populate('project');
+    
+        if (page && limit) {
+            query = query.skip(skip).limit(limit);
+        }
+    
+        const sessions = await query;
+    
+        if (!sessions.length) {
+            return res.status(404).json({ message: "No sessions found" });
+        }
+    
+        return res.json({
+            sessions,
+            totalItems,
+            totalPages: limit ? Math.ceil(totalItems / limit) : 1, // Avoid division by zero
+            currentPage: page || 1
+        });
+    
     } catch (error) {
-        console.log(error)
-        return res.status(500).json({message:"Server Error"})
+        console.error(error);
+        return res.status(500).json({ message: "Server Error" });
     }
+    
 }
 const getSession=async (req, res) => {
         try {

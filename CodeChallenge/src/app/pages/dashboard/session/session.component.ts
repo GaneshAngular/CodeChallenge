@@ -4,10 +4,11 @@ import { FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators } 
 import { ProjectService } from '../../../core/services/project/project.service';
 import { SessionService } from '../../../core/services/session/session.service';
 import { HttpParams } from '@angular/common/http';
+import { PaginationComponent } from "../../../shared/components/pagination/pagination.component";
 
 @Component({
   selector: 'app-session',
-  imports: [CommonModule,FormsModule,ReactiveFormsModule],
+  imports: [CommonModule, FormsModule, ReactiveFormsModule, PaginationComponent],
   templateUrl: './session.component.html',
   styleUrl: './session.component.css'
 })
@@ -16,6 +17,10 @@ export class SessionComponent implements OnInit {
  projects:any[] = [];
  sessions:any[] = [];
  session:any
+ page:number = 1
+  totalPages=0
+  limit=2
+  searchTitle=''
  isUpdateSession=false
   sessionForm=new FormGroup({
     title:new FormControl('',[Validators.required,Validators.pattern(/^[a-zA-Z0-9\s]{2,}$/)]),
@@ -34,9 +39,19 @@ projectService=inject(ProjectService)
      })
   }
 
+  changePage(page:any){
+    this.page=page
+    this.loadSessions()
+ }
+
   loadSessions(){
-    this.sessionService.getSessions().subscribe((res:any)=>{
-      this.sessions=res
+    let params=new HttpParams().set('limit',this.limit).set('page',this.page)
+  if (this.searchTitle) {
+    params = params.set('title', this.searchTitle);
+  }
+    this.sessionService.getSessions(params).subscribe((res:any)=>{
+      this.sessions=res.sessions
+      this.totalPages=res.totalPages
     })
   }
   toggleModal(){

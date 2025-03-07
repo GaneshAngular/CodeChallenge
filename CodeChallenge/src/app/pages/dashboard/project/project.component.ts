@@ -3,10 +3,11 @@ import { Component, inject, OnInit } from '@angular/core';
 import { FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ProjectService } from '../../../core/services/project/project.service';
 import { HttpParams } from '@angular/common/http';
+import { PaginationComponent } from "../../../shared/components/pagination/pagination.component";
 
 @Component({
   selector: 'app-project',
-  imports: [CommonModule,FormsModule,ReactiveFormsModule],
+  imports: [CommonModule, FormsModule, ReactiveFormsModule, PaginationComponent],
   templateUrl: './project.component.html',
   styleUrl: './project.component.css'
 })
@@ -14,6 +15,10 @@ export class ProjectComponent implements OnInit {
   projectModal=false
  projects:any=[]
  project:any
+ page:number = 1
+  totalPages=0
+  limit=2
+  searchTitle=''
  isProjectUpdate=false
   projectService=inject(ProjectService)
   projectForm=new FormGroup({
@@ -27,10 +32,20 @@ export class ProjectComponent implements OnInit {
 
 
   loadProjects(){
-    this.projectService.getProjects().subscribe((res:any)=>{
-      this.projects=res
+    let params=new HttpParams().set('limit',this.limit).set('page',this.page)
+  if (this.searchTitle) {
+    params = params.set('title', this.searchTitle);
+  }
+    this.projectService.getProjects(params).subscribe((res:any)=>{
+      this.projects=res.projects
+      this.totalPages=res.totalPages
     })
   }
+
+  changePage(page:any){
+    this.page=page
+    this.loadProjects()
+ }
 
   editProject(index:number){
     this.isProjectUpdate=true

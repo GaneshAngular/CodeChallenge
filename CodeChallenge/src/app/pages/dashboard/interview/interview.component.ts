@@ -5,10 +5,11 @@ import { SessionService } from '../../../core/services/session/session.service';
 import { InterviewerService } from '../../../core/services/interviewer/interviewer.service';
 import { Router, RouterLink } from '@angular/router';
 import { HttpParams } from '@angular/common/http';
+import { PaginationComponent } from "../../../shared/components/pagination/pagination.component";
 
 @Component({
   selector: 'app-interview',
-  imports: [CommonModule,FormsModule,ReactiveFormsModule],
+  imports: [CommonModule, FormsModule, ReactiveFormsModule, PaginationComponent],
   templateUrl: './interview.component.html',
   styleUrl: './interview.component.css'
 })
@@ -17,6 +18,10 @@ export class InterviewComponent implements OnInit {
   sessions:any
   interviews:any
   interview:any
+  page:number = 1
+  totalPages=0
+  limit=2
+  searchTitle=''
   isUpdateInterview=false
   router=inject(Router)
   interviewService=inject(InterviewerService)
@@ -32,10 +37,18 @@ ngOnInit(): void {
 }
 
 loadSessions(){
+
+
     this.sessionService.getSessions().subscribe((res:any)=>{
       this.sessions=res
+
     })
 
+}
+
+changePage(page:any){
+   this.page=page
+   this.loadInterviews()
 }
 editInterview(index:number){
    this.isUpdateInterview=true
@@ -45,8 +58,14 @@ editInterview(index:number){
 }
 
 loadInterviews(){
-    this.interviewService.getInterviewes().subscribe((res:any)=>{
-      this.interviews=res
+  let params=new HttpParams().set('limit',this.limit).set('page',this.page)
+  if (this.searchTitle) {
+    params = params.set('title', this.searchTitle);
+  }
+    this.interviewService.getInterviewes(params).subscribe((res:any)=>{
+      this.interviews=res.interviews
+      this.totalPages=res.totalPages
+      
     })
 
 }
