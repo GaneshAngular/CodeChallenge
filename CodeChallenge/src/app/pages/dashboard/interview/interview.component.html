@@ -1,17 +1,17 @@
-<div class="w-10/12 mx-auto relative h-full flex flex-col   ">
+<div class="w-full min-md:w-10/12 relative h-full flex flex-col overflow-x-auto   ">
  <div >
   <h1 class="text-2xl uppercase">Interviews</h1>
  </div>
-<div class="flex w-2/6 justify-between items-center my-7">
+<div class="flex max-md:flex-col gap-3  my-7">
   <div>
     <input type="text" class="outline-none border border-gray-400 rounded-md " [(ngModel)]="searchTitle" placeholder="search title" (keyup)="loadInterviews()">
   </div>
   <div>
-    <button class="w-20 h-10 rounded-full bg-blue-400" (click)="toggleInterviewModal()">Shedule</button>
+    <button class="w-30 min-md:w-20 h-7 rounded-full bg-blue-400" (click)="toggleInterviewModal()">Shedule</button>
   </div>
 </div>
 
-<div class="relative overflow-x-auto shadow-md sm:rounded-lg ">
+<div class="relative max-md:overflow-x-auto shadow-md sm:rounded-lg ">
   <table class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
       <thead class="text-xs text-center text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
           <tr>
@@ -88,12 +88,12 @@
                     </div>
 
                     <div class="col-span-2">
-                        <label for="session" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Challenege Session</label>
+                        <label  for="session" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Challenege Session</label>
                         <select multiple formControlName="sessions" id="session" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500">
                             <!-- <option se>Select category</option> -->
-                            @for (session of sessions; track $index) {
-                              <option [value]="session?._id">{{session?.title}}</option>
-                            }
+                              <option *ngIf="sessions?.length==0" value="">No inactive sessions</option>
+                              <option *ngFor="let session of sessions" [value]="session?._id">{{session?.title}}</option>
+
                         </select>
                     </div>
 

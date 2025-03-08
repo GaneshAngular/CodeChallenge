@@ -22,10 +22,14 @@ const getSessions=async(req,res)=>{
     const page = req.query.page ? parseInt(req.query.page) : null;
     const limit = req.query.limit ? parseInt(req.query.limit) : null;
     const skip = page && limit ? (page - 1) * limit : 0;
-    const searchQuery = req.query.title
+    const status=req.query.status
+    let searchQuery = req.query.title 
       ? { sessionName: { $regex: req.query.title, $options: "i" } }
       : {};
-    
+      if(status)
+      searchQuery.status=status
+
+      
     try {
         // Get total count of filtered results
         const totalItems = await sessionModel.countDocuments(searchQuery);

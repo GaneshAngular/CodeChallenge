@@ -15,9 +15,9 @@ import { CanDeactivatePage } from '../../core/guards/challengePage/restrict-chal
 import { SessionService } from '../../core/services/session/session.service';
 import { HttpParams } from '@angular/common/http';
 import { SocketIoService } from '../../core/services/socket.io/socket.io.service';
-import { DatePipe } from '@angular/common';
 import { TimePipe } from '../../shared/pipes/timeconverter/time.pipe';
-import stackblitz from '@stackblitz/sdk';
+import sdk from '@stackblitz/sdk';
+import { PreventCopyPasteDirective } from '../../shared/directives/prevent-copy-paste.directive';
 
 @Component({
   selector: 'app-live-challenge',
@@ -35,7 +35,9 @@ export class LiveChallengeComponent
   time: number = 0;
   timerInterval: any;
   warningCount: number = 0;
-  modifiedProjectUrl: string = '';
+  isChallengeCompleted: boolean = false;
+  isSessionEnded: boolean = false;
+  stackblitzVm:any
   projectService = inject(ProjectService);
   sessionService = inject(SessionService);
   router = inject(Router);
@@ -44,11 +46,10 @@ export class LiveChallengeComponent
   @ViewChild('editor', { static: false })
   iframe!: ElementRef<HTMLIFrameElement>;
 
-  @HostListener('window:beforeunload', ['$event'])
-  onBeforeUnload(event: BeforeUnloadEvent) {
-    event.preventDefault();
-    event.returnValue = ''; // This triggers the browser's confirmation dialog
-  }
+
+
+
+
 
   ngOnInit(): void {
     const id: string = this.router.url.split('/').pop() || '';
@@ -57,19 +58,23 @@ export class LiveChallengeComponent
     this.socketService.getResponse('update-interview').subscribe((response) => {
       this.loadChallengeSession(id);
     });
+    this.updateSession(id)
     // window.addEventListener('message', this.handleStackBlitzChanges);
   }
+
 
   loadChallengeSession(id: string) {
     this.sessionService.getSession(id).subscribe(
       (res: any) => {
         this.activeSession = res;
         if (this.activeSession.status == 'completed') {
+          this.isSessionEnded=true
           this.router.navigate(['/response/ResponseSubmited']);
         } else {
           this.projectUrl = this.sanitizer.bypassSecurityTrustResourceUrl(
             res.project.url
           );
+
           // this.updateSession(id)
         }
       },
@@ -79,46 +84,6 @@ export class LiveChallengeComponent
     );
   }
 
-  // handleStackBlitzChanges = async (event: MessageEvent) => {
-  //   if (event.origin.includes('stackblitz.com')) {
-  //     console.log('Candidate made changes:', event.data);
-
-  //     // Fork the project and get a new link
-  //     this.getFilesFromStackBlitz();
-  //   }
-  // };
-
-  // async getFilesFromStackBlitz() {
-  //   try {
-  //     const vm = await stackblitz.embedProject('your-project-id', {
-  //       openFile: 'src/main.ts',
-  //       height: 600,
-  //       width: '100%'
-  //     });
-
-  //     const files = await vm.getFsSnapshot(); // Get modified files
-  //     this.projectFiles = files;
-  //     console.log('Modified Files:', files);
-
-  //     // Create a new project with the modified files
-  //     this.createNewProject(files);
-  //   } catch (error) {
-  //     console.error('Error fetching project files:', error);
-  //   }
-  // }
-
-  // async createNewProject(files: any) {
-  //   const newProject = {
-  //     files: files,
-  //     title: 'Candidate Modified Project',
-  //     description: 'This project contains modifications made by the candidate.',
-  //     template: 'javascript'
-  //   };
-
-  //   const newProjectInstance = await stackblitz.openProject(newProject);
-  //   this.modifiedProjectUrl = newProjectInstance.url;
-  //   console.log('New Project Link:', this.modifiedProjectUrl);
-  // }
 
   updateSession(id: string) {
     const params = new HttpParams().set('id', id);
@@ -128,9 +93,9 @@ export class LiveChallengeComponent
   }
 
   ngAfterViewInit() {
-    window.addEventListener('beforeunload', (event: any) =>
-      event.preventDefault()
-    );
+    // window.addEventListener('beforeunload', (event: any) =>
+    //   event.preventDefault()
+    // );
 
     this.iframe.nativeElement.onload = () => {
       const iframeDoc = this.iframe.nativeElement.contentDocument;
@@ -143,19 +108,23 @@ export class LiveChallengeComponent
         );
       }
     };
+    sdk.embedProjectId(this.iframe.nativeElement, 'python-pgx4avs1', {
+      openFile: 'index.js', // Default file
+      height: 800
+    }).then(vm => {
+      this.stackblitzVm = vm; // Store the VM instance for later use
+    });
+
+
+
     // document.addEventListener("visibilitychange", this.preventPageChange);
     this.timerInterval = setInterval(() => {
       this.time++;
-      console.log(this.time);
+
     }, 1000);
   }
 
-  // preventPageChange() {
-  //   if (document.hidden) {
-  //     alert('hellololo');
-  //     // this.submitChallenge()
-  //   }
-  // }
+  //
 
   submitChallenge() {
     if (!confirm('sure to submit challenge')) return;
@@ -165,6 +134,7 @@ export class LiveChallengeComponent
       .updateSession({ status: 'completed', timetaken: this.time }, params)
       .subscribe((res: any) => {
         alert(res.message);
+        this.isChallengeCompleted=true
         this.loadChallengeSession(this.activeSession._id);
         this.router.navigate(['/response/Thank You']);
       });
@@ -173,10 +143,11 @@ export class LiveChallengeComponent
 
   // ✅ Add this method for the CanDeactivate guard
   canDeactivate(): boolean {
-    if (this.activeSession.status == 'completed') return true;
-    return window.confirm(
-      'Are you sure you want to leave? Unsaved changes may be lost.'
-    );
+    // if (this.activeSession.status == 'completed') return true;
+    // return window.confirm(
+    //   'Are you sure you want to leave? Unsaved changes may be lost.'
+    // );
+    return true
   }
 
   ngOnDestroy(): void {
@@ -184,4 +155,9 @@ export class LiveChallengeComponent
       event.preventDefault()
     );
   }
+
+
+
+
+
 }

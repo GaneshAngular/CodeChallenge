@@ -6,21 +6,22 @@ import { InterviewerService } from '../../../core/services/interviewer/interview
 import { Router, RouterLink } from '@angular/router';
 import { HttpParams } from '@angular/common/http';
 import { PaginationComponent } from "../../../shared/components/pagination/pagination.component";
+import { PreventCopyPasteDirective } from '../../../shared/directives/prevent-copy-paste.directive';
 
 @Component({
   selector: 'app-interview',
-  imports: [CommonModule, FormsModule, ReactiveFormsModule, PaginationComponent],
+  imports: [CommonModule, FormsModule, ReactiveFormsModule, PaginationComponent,],
   templateUrl: './interview.component.html',
   styleUrl: './interview.component.css'
 })
 export class InterviewComponent implements OnInit {
   interviewModal=false
-  sessions:any
+  sessions:any=[]
   interviews:any
   interview:any
   page:number = 1
   totalPages=0
-  limit=2
+  limit=5
   searchTitle=''
   isUpdateInterview=false
   router=inject(Router)
@@ -37,11 +38,9 @@ ngOnInit(): void {
 }
 
 loadSessions(){
-
-
-    this.sessionService.getSessions().subscribe((res:any)=>{
-      this.sessions=res
-
+  const params=new HttpParams().set('status',"inactive")
+    this.sessionService.getSessions(params).subscribe((res:any)=>{
+      this.sessions=res.sessions
     })
 
 }
@@ -65,7 +64,7 @@ loadInterviews(){
     this.interviewService.getInterviewes(params).subscribe((res:any)=>{
       this.interviews=res.interviews
       this.totalPages=res.totalPages
-      
+
     })
 
 }

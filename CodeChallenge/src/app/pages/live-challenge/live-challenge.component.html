@@ -3,4 +3,7 @@
   <div class="text-white">{{time |time}}</div>
    <button (click)="submitChallenge()" type="button" class="p-1 bg-red-500 rounded m-1">Submit Challenge</button>
 </div>
-<iframe #editor [src]="projectUrl" frameborder="0"></iframe>
+<!-- <iframe #editor appPreventCopyPaste [src]="projectUrl" frameborder="0"></iframe> -->
+ <div #editor>
+
+ </div>

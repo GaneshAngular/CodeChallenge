@@ -19,7 +19,7 @@ export class SessionComponent implements OnInit {
  session:any
  page:number = 1
   totalPages=0
-  limit=2
+  limit=5
   searchTitle=''
  isUpdateSession=false
   sessionForm=new FormGroup({
@@ -35,7 +35,7 @@ export class SessionComponent implements OnInit {
 projectService=inject(ProjectService)
   loadProjects(){
      this.projectService.getProjects().subscribe((res:any)=>{
-       this.projects=res
+       this.projects=res.projects
      })
   }
 

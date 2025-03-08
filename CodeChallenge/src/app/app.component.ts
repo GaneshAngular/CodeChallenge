@@ -10,4 +10,8 @@ import { NavBarComponent } from "./shared/components/nav-bar/nav-bar.component";
 })
 export class AppComponent {
   title = 'CodeChallenge';
+  constructor(){
+
+    }
+
 }
