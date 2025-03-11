@@ -3,19 +3,12 @@ import { restrictChallengePageGuard } from './core/guards/challengePage/restrict
 
 
 export const routes: Routes = [{
-  path: '',
-  redirectTo: 'api',
-  pathMatch: 'full'
+    path: '',
+    redirectTo: 'dashboard',
+    pathMatch: 'full'
+  
 },
-  { path:'api',
-    loadComponent:()=>import('./pages/layout/layout.component').then(t=>t.LayoutComponent),
-    children:[
-      {
-         path:'',
-         redirectTo:'dashboard',
-         pathMatch:'full'
-      },
-     {
+  {
   path: 'dashboard',
   loadComponent: () => import('./pages/dashboard/dashboard/dashboard.component').then(m => m.DashboardComponent),
   children:[
@@ -37,7 +30,7 @@ export const routes: Routes = [{
 },{
   path:'login',
   loadComponent: () => import('./pages/login/login.component').then(m => m.LoginComponent)
-}]},
+},
 // ,{
 //   path:'live/challenge/expired',
 //   loadComponent: () => import('./pages/session-end/session-end.component').then(m => m.SessionEndComponent)

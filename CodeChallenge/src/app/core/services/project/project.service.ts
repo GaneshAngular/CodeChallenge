@@ -12,7 +12,7 @@ export class ProjectService {
   httpService=inject(HttpService)
 
   getProjects(params?:HttpParams) {
-    return this.httpService.get(PROJECT_API.api);
+    return this.httpService.get(PROJECT_API.api,params);
   }
 
   getProject(id:string){

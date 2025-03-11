@@ -58,7 +58,7 @@ document.addEventListener('paste', (event) => event.preventDefault());
 
   loadProjects(){
     this.projectService.getProjects().subscribe((res:any)=>{
-      this.projects=res
+      this.projects=res.projects
       this.socketService.sendData('date',"Hello from client")
     })
  }

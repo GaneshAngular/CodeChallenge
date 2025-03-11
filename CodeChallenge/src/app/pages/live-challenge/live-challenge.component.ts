@@ -16,13 +16,14 @@ import { SessionService } from '../../core/services/session/session.service';
 import { HttpParams } from '@angular/common/http';
 import { SocketIoService } from '../../core/services/socket.io/socket.io.service';
 import { TimePipe } from '../../shared/pipes/timeconverter/time.pipe';
-import sdk from '@stackblitz/sdk';
+import sdk, { VM } from '@stackblitz/sdk';
 import { PreventCopyPasteDirective } from '../../shared/directives/prevent-copy-paste.directive';
+import { SafeurlPipe } from '../../shared/pipes/safeurl/safeurl.pipe';
 
 @Component({
   selector: 'app-live-challenge',
   standalone: true,
-  imports: [TimePipe],
+  imports: [TimePipe, SafeurlPipe],
   templateUrl: './live-challenge.component.html',
   styleUrl: './live-challenge.component.css',
 })
@@ -30,14 +31,14 @@ export class LiveChallengeComponent
   implements OnInit, AfterViewInit, CanDeactivatePage, OnDestroy
 {
   hasUnsavedChanges: boolean = true;
-  projectUrl: SafeResourceUrl = '';
+  projectUrl = '';
   activeSession: any;
   time: number = 0;
   timerInterval: any;
   warningCount: number = 0;
   isChallengeCompleted: boolean = false;
   isSessionEnded: boolean = false;
-  stackblitzVm:any
+  stackblitzVm: any;
   projectService = inject(ProjectService);
   sessionService = inject(SessionService);
   router = inject(Router);
@@ -45,35 +46,51 @@ export class LiveChallengeComponent
   socketService = inject(SocketIoService);
   @ViewChild('editor', { static: false })
   iframe!: ElementRef<HTMLIFrameElement>;
+  vm!: VM;
+  files: any;
+  projectMeta: any;
+  stackblitzData: any;
 
+  // @HostListener('document:keydown', ['$event'])
+  // handleKeyboardEvent(event: KeyboardEvent) {
+  //   if ((event.ctrlKey || event.metaKey) && event.key === 's') {
+  //     this.saveProject();
+  //   }
+  // }
 
-
-
-
+  // @HostListener('window:beforeunload', ['$event'])
+  // onBeforeUnload(event:BeforeUnloadEvent): void {
+  //   event.preventDefault()
+  //      this.saveProject()
+  //      alert("bbjfdfdfdvf")
+  // }
 
   ngOnInit(): void {
     const id: string = this.router.url.split('/').pop() || '';
     this.warningCount = 1;
+
     this.loadChallengeSession(id);
     this.socketService.getResponse('update-interview').subscribe((response) => {
+
       this.loadChallengeSession(id);
     });
-    this.updateSession(id)
-    // window.addEventListener('message', this.handleStackBlitzChanges);
+
   }
 
-
-  loadChallengeSession(id: string) {
+   loadChallengeSession(id: string) {
     this.sessionService.getSession(id).subscribe(
-      (res: any) => {
+      async(res: any) => {
         this.activeSession = res;
         if (this.activeSession.status == 'completed') {
-          this.isSessionEnded=true
+          this.isSessionEnded = true;
           this.router.navigate(['/response/ResponseSubmited']);
         } else {
-          this.projectUrl = this.sanitizer.bypassSecurityTrustResourceUrl(
-            res.project.url
-          );
+          this.projectUrl = res.project.url;
+          if (res.code) {
+            await this.loadProject(res.code);
+          } else {
+            this.createNewProject(this.getProjectId(this.projectUrl));
+          }
 
           // this.updateSession(id)
         }
@@ -83,7 +100,25 @@ export class LiveChallengeComponent
       }
     );
   }
+ async loadProject(files: any) {
+    this.files = files;
+    console.log(this.files);
+   this.vm=await sdk.embedProject(
+      'editor',
+      {
+        files,
+        title: this.activeSession.title,
+        description: 'Dynamically forked from StackBlitz',
+        template: this.detectProjectTemplate(this.files), // Set the correct template dynamically
+      },
+      {
+        // forceEmbedLayout: true,
+        // openFile: 'package.json',
+        height: 672,
+      }
+    )
 
+  }
 
   updateSession(id: string) {
     const params = new HttpParams().set('id', id);
@@ -97,34 +132,23 @@ export class LiveChallengeComponent
     //   event.preventDefault()
     // );
 
-    this.iframe.nativeElement.onload = () => {
-      const iframeDoc = this.iframe.nativeElement.contentDocument;
-      if (iframeDoc) {
-        iframeDoc.addEventListener('copy', (event) => event.preventDefault());
-        iframeDoc.addEventListener('cut', (event) => event.preventDefault());
-        iframeDoc.addEventListener('paste', (event) => event.preventDefault());
-        iframeDoc.addEventListener('contextmenu', (event) =>
-          event.preventDefault()
-        );
-      }
-    };
-    sdk.embedProjectId(this.iframe.nativeElement, 'python-pgx4avs1', {
-      openFile: 'index.js', // Default file
-      height: 800
-    }).then(vm => {
-      this.stackblitzVm = vm; // Store the VM instance for later use
-    });
-
-
+    // this.iframe.nativeElement.onload = () => {
+    //   const iframeDoc = this.iframe.nativeElement;
+    //   if (iframeDoc) {
+    //     iframeDoc.addEventListener('copy', (event) => event.preventDefault());
+    //     iframeDoc.addEventListener('cut', (event) => event.preventDefault());
+    //     iframeDoc.addEventListener('paste', (event) => event.preventDefault());
+    //     iframeDoc.addEventListener('contextmenu', (event) =>
+    //       event.preventDefault()
+    //     );
+    //   }
+    // };
 
     // document.addEventListener("visibilitychange", this.preventPageChange);
     this.timerInterval = setInterval(() => {
       this.time++;
-
     }, 1000);
   }
-
-  //
 
   submitChallenge() {
     if (!confirm('sure to submit challenge')) return;
@@ -134,7 +158,7 @@ export class LiveChallengeComponent
       .updateSession({ status: 'completed', timetaken: this.time }, params)
       .subscribe((res: any) => {
         alert(res.message);
-        this.isChallengeCompleted=true
+        this.isChallengeCompleted = true;
         this.loadChallengeSession(this.activeSession._id);
         this.router.navigate(['/response/Thank You']);
       });
@@ -147,17 +171,97 @@ export class LiveChallengeComponent
     // return window.confirm(
     //   'Are you sure you want to leave? Unsaved changes may be lost.'
     // );
-    return true
+    return true;
   }
 
-  ngOnDestroy(): void {
-    window.removeEventListener('beforeunload', (event: any) =>
-      event.preventDefault()
-    );
+  ngOnDestroy() {
+    // window.removeEventListener('beforeunload', (event: any) =>
+    //   event.preventDefault()
+    // );
+
   }
 
+  getProjectId(url: string) {
+    return url.split('/').pop()?.split('?')[0] || '';
+  }
+
+  getProjectFIles(projectID: string) {
+    sdk
+      .embedProjectId('editor', projectID)
+      .then((vm: any) => {
+        this.vm = vm;
+
+        //  localStorage.setItem(projectID, JSON.stringify(this.files))
+      })
+      .catch((error: any) => {
+        console.error(error);
+      });
+  }
+
+  async createNewProject(projectId: string) {
+
+    this.vm=await sdk
+      .embedProjectId('editor', projectId, {
+        forceEmbedLayout: true,
+        openFile: 'package.json',
+        height: 672,
+      })
+
+
+        this.files= await this.vm.getFsSnapshot()
+          // Extract template dynamically based on project files or StackBlitz settings
+          // const detectedTemplate = this.detectProjectTemplate(files);
+
+          this.stackblitzData = {
+            files:this.files,
+            title: 'Forked StackBlitz Project',
+            description: 'Dynamically forked from StackBlitz',
+            template: this.detectProjectTemplate(this.files), // Set the correct template dynamically
+          };
 
 
 
 
+  }
+
+  async saveProject() {
+    let lastOpenFile = '';
+   let file=await  this.vm.getFsSnapshot()
+    // sdk
+    //   .connect(document.getElementById('editor') as HTMLIFrameElement)
+    //   .then((editor) => {
+    //     this.vm=editor
+    //     return editor.getFsSnapshot(); // Get latest files from the editor
+    //   })
+    //   .then((files) => {
+    //     this.stackblitzData = {
+    //       files,
+    //       title: 'Updated StackBlitz Project',
+    //       description: 'Project with latest changes',
+    //       template:'node', // Ensure correct template
+    //     };
+
+    console.log('Saving updated files:', file); // Debugging
+    const params = new HttpParams().set('id', this.activeSession._id);
+     if(this.vm)
+    this.sessionService
+      .updateSession({ code:file }, params)
+      .subscribe((res: any) => {
+        console.log(res);
+      },(err:any)=>console.log(err));
+  }
+
+  // Function to detect StackBlitz template
+  detectProjectTemplate(files: any): any {
+    if (files['angular.json']) return 'angular-cli';
+    if (files['package.json'] && files['package.json'].includes('"react"'))
+      return 'create-react-app';
+    if (files['index.html'] && files['script.js']) return 'html';
+    if (files['index.js']) return 'javascript';
+    if (files['server.js'] || files['index.ts']) return 'node';
+    if (files['tsconfig.json']) return 'typescript';
+    if (files['polymer.json']) return 'polymer';
+    if (files['vue.config.js']) return 'vue';
+    return 'javascript'; // Default fallback
+  }
 }

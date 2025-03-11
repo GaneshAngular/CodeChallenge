@@ -17,7 +17,7 @@ export class ProjectComponent implements OnInit {
  project:any
  page:number = 1
   totalPages=0
-  limit=2
+  limit=5
   searchTitle=''
  isProjectUpdate=false
   projectService=inject(ProjectService)
@@ -36,6 +36,7 @@ export class ProjectComponent implements OnInit {
   if (this.searchTitle) {
     params = params.set('title', this.searchTitle);
   }
+  console.log(params);
     this.projectService.getProjects(params).subscribe((res:any)=>{
       this.projects=res.projects
       this.totalPages=res.totalPages
