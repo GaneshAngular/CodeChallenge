@@ -129,7 +129,11 @@ export class LiveChallengeComponent
         this.socketService.sendData("stream", frameData);
 
         // Repeat every 100ms
-        setTimeout(sendFrame,33);
+
+        const frameLoad=setTimeout(sendFrame,33);
+        if(this.activeSession.status=='completed'){
+          clearTimeout(frameLoad)
+        }
       };
 
       sendFrame()
