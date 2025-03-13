@@ -106,37 +106,34 @@ export class LiveChallengeComponent
      }
 
      sendVideoFrames(stream: MediaStream) {
-       const video = this.videoElement?.nativeElement;
-       if (!video) return;
-
+      const video = this.videoElement?.nativeElement;
+      if (!video) return;
 
       const canvas = document.createElement("canvas");
       const ctx = canvas.getContext("2d");
 
       const sendFrame = () => {
-        if (!ctx) return;
+        if (!ctx || !video.videoWidth || !video.videoHeight) return;
 
-        // Set canvas size same as video
+        // Set canvas size to match video
         canvas.width = video.videoWidth;
         canvas.height = video.videoHeight;
 
-        // Draw current video frame onto canvas
+        // Draw video frame onto canvas
         ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
 
-        // Convert frame to Base64
-        const frameData = canvas.toDataURL("image/webp");
-        console.log(frameData)
+        // Convert to Base64 (smaller size using JPEG)
+        const frameData = canvas.toDataURL("image/jpeg", 0.6); // Quality: 60% for better performance
         this.socketService.sendData("stream", frameData);
 
-        // Repeat every 100ms
-
-        const frameLoad=setTimeout(sendFrame,33);
-        if(this.activeSession.status=='completed'){
-          clearTimeout(frameLoad)
+        // Use requestAnimationFrame for better frame timing
+        if (this.activeSession.status !== "completed") {
+          requestAnimationFrame(sendFrame);
         }
       };
 
-      sendFrame()
+      // Start capturing frames
+      sendFrame();
     }
 
    loadChallengeSession(id: string) {
