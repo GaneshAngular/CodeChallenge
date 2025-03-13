@@ -73,7 +73,7 @@ document.addEventListener('paste', (event) => event.preventDefault());
     if (this.videoData.length > 0) {
       const frame = this.videoData.shift(); // Get the first frame
       if (frame) {
-        videoElement.src = frame; // Update video source
+        videoElement.srcObject = frame; // Update video source
       }
     }
 
