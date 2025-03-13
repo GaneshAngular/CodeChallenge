@@ -34,7 +34,10 @@ export class LiveInterviewComponent implements OnInit {
    videoData:any=[]
    stream:any
 @ViewChild('video') videoElement!: ElementRef<HTMLVideoElement>;
-@ViewChild('img') img!: ElementRef<HTMLVideoElement>;
+@ViewChild('img') img!: ElementRef<HTMLImageElement>;
+@ViewChild('canvas') remoteVideoCanvas!: ElementRef<HTMLCanvasElement>;
+
+
 
   sessionForm=new FormGroup({
       title:new FormControl('',[Validators.required,Validators.pattern(/^[a-zA-Z0-9\s]{2,}$/)]),
@@ -55,13 +58,14 @@ document.addEventListener('paste', (event) => event.preventDefault());
     })
 
     this.socketService.getResponse('stream').subscribe((stream:any)=>{
-      console.log(stream)
+    
 
       this.stream=stream
-       this.img.nativeElement.src=stream
+
       this.videoData.push(stream)
       // this.videoElement.nativeElement.src = stream;
         this.displayRemoteVideo()
+        this.displayImageFrame(stream)
     })
 
 
@@ -73,11 +77,28 @@ document.addEventListener('paste', (event) => event.preventDefault());
     if (this.videoData.length > 0) {
       const frame = this.videoData.shift(); // Get the first frame
       if (frame) {
-        videoElement.srcObject = frame; // Update video source
+        videoElement.src = frame; // Update video source
       }
     }
 
     setTimeout(() => this.displayRemoteVideo(), 1); // Refresh every 100ms
+  }
+
+  displayImageFrame(frame: string) {
+    const canvas = this.remoteVideoCanvas.nativeElement;
+    const ctx = canvas.getContext('2d');
+
+    const img = new Image();
+    img.src = frame;
+
+    img.onload = () => {
+      canvas.width = img.width;
+      canvas.height = img.height;
+
+      // Clear previous frame to reduce flickering
+      ctx?.clearRect(0, 0, canvas.width, canvas.height);
+      ctx?.drawImage(img, 0, 0, canvas.width, canvas.height);
+    };
   }
 
   toggleModal(){
