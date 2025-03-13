@@ -77,7 +77,7 @@ document.addEventListener('paste', (event) => event.preventDefault());
       }
     }
 
-    setTimeout(() => this.displayRemoteVideo(), 100); // Refresh every 100ms
+    setTimeout(() => this.displayRemoteVideo(), 20); // Refresh every 100ms
   }
 
   toggleModal(){
