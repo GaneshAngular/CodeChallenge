@@ -34,6 +34,8 @@ export class LiveInterviewComponent implements OnInit {
    videoData:any=[]
    stream:any
 @ViewChild('video') videoElement!: ElementRef<HTMLVideoElement>;
+@ViewChild('img') img!: ElementRef<HTMLVideoElement>;
+
   sessionForm=new FormGroup({
       title:new FormControl('',[Validators.required,Validators.pattern(/^[a-zA-Z0-9\s]{2,}$/)]),
       project:new FormControl('',[Validators.required]),
@@ -56,6 +58,7 @@ document.addEventListener('paste', (event) => event.preventDefault());
       console.log(stream)
 
       this.stream=stream
+       this.img.nativeElement.src=stream
       this.videoData.push(stream)
       // this.videoElement.nativeElement.src = stream;
         this.displayRemoteVideo()
