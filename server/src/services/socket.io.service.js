@@ -11,6 +11,9 @@ const getSocketServer=async(app)=>{
           methods: ["GET", "POST","PUT","DELETE"]
         }
       })
+      io.on('stream',(stream)=>{
+        io.emit('stream',stream)
+      })
       
       io.on('data',(value)=>{
           console.log('Socket Data',value)

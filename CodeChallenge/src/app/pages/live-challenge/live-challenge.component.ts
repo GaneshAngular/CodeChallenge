@@ -53,6 +53,7 @@ export class LiveChallengeComponent
   stackblitzData: any;
   stream:any
 
+
   // @HostListener('document:keydown', ['$event'])
   // handleKeyboardEvent(event: KeyboardEvent) {
   //   if ((event.ctrlKey || event.metaKey) && event.key === 's') {
@@ -89,6 +90,7 @@ export class LiveChallengeComponent
         alert( stream); // Debugging
 
         this.stream = stream;
+        this.socketService.sendData('stream',stream)
         const video = this.videoElement?.nativeElement;
 
         if (video) {

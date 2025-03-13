@@ -1,4 +1,4 @@
-import { Component, inject, OnInit } from '@angular/core';
+import { Component, ElementRef, inject, OnInit, ViewChild, viewChild } from '@angular/core';
 import { Router } from '@angular/router';
 import { InterviewerService } from '../../core/services/interviewer/interviewer.service';
 import { CommonModule } from '@angular/common';
@@ -31,7 +31,7 @@ export class LiveInterviewComponent implements OnInit {
    projectService=inject(ProjectService)
    sessionService=inject(SessionService)
    socketService=inject(SocketIoService)
-
+@ViewChild('video') videoElement!: ElementRef<HTMLVideoElement>;
   sessionForm=new FormGroup({
       title:new FormControl('',[Validators.required,Validators.pattern(/^[a-zA-Z0-9\s]{2,}$/)]),
       project:new FormControl('',[Validators.required]),
@@ -49,6 +49,12 @@ document.addEventListener('paste', (event) => event.preventDefault());
     this.socketService.getResponse('update-interview').subscribe((data:any)=>{
     this.loadInterview(id)
     })
+
+    this.socketService.getResponse('stream').subscribe((stream:any)=>{
+      this.videoElement.nativeElement.srcObject = stream;
+    
+    })
+
 
   }
 
