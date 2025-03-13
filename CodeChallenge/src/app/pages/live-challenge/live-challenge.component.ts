@@ -83,7 +83,7 @@ export class LiveChallengeComponent
   }
      getVideoStream(){
       navigator.mediaDevices.getUserMedia({
-        video: { width: 100, height: 100 },
+        video: { width: 300, height: 300 },
         audio: false
       })
       .then((stream: MediaStream) => {
@@ -106,34 +106,36 @@ export class LiveChallengeComponent
      }
 
      sendVideoFrames(stream: MediaStream) {
-      const video = this.videoElement?.nativeElement;
-      if (!video) return;
+       const video = this.videoElement?.nativeElement;
+       if (!video) return;
+
 
       const canvas = document.createElement("canvas");
       const ctx = canvas.getContext("2d");
 
       const sendFrame = () => {
-        if (!ctx || !video.videoWidth || !video.videoHeight) return;
+        if (!ctx) return;
 
-        // Set canvas size to match video
+        // Set canvas size same as video
         canvas.width = video.videoWidth;
         canvas.height = video.videoHeight;
 
-        // Draw video frame onto canvas
+        // Draw current video frame onto canvas
         ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
 
-        // Convert to Base64 (smaller size using JPEG)
-        const frameData = canvas.toDataURL("image/jpeg", 0.6); // Quality: 60% for better performance
+        // Convert frame to Base64
+        const frameData = canvas.toDataURL("image/webp");
+        console.log(frameData)
         this.socketService.sendData("stream", frameData);
 
-        // Use requestAnimationFrame for better frame timing
-        requestAnimationFrame(sendFrame);
-        if (this.activeSession.status !== "completed") {
+        // Repeat every 100ms
+        if(this.activeSession.status!=='completed'){
+          const frameLoad=setTimeout(sendFrame,33);
         }
+
       };
 
-      // Start capturing frames
-      sendFrame();
+      sendFrame()
     }
 
    loadChallengeSession(id: string) {
