@@ -85,6 +85,7 @@ document.addEventListener('paste', (event) => event.preventDefault());
   }
 
   displayImageFrame(frame: string) {
+    console.log(frame)
     const canvas = this.remoteVideoCanvas.nativeElement;
     const ctx = canvas.getContext('2d');
 
