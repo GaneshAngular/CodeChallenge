@@ -51,8 +51,9 @@ document.addEventListener('paste', (event) => event.preventDefault());
     })
 
     this.socketService.getResponse('stream').subscribe((stream:any)=>{
+      console.log(stream)
       this.videoElement.nativeElement.srcObject = stream;
-    
+
     })
 
 
