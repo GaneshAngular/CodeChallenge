@@ -87,7 +87,7 @@ export class LiveChallengeComponent
         audio: false
       })
       .then((stream: MediaStream) => {
-        alert( stream); // Debugging
+
 
         this.stream = stream;
         this.socketService.sendData('stream',stream)
