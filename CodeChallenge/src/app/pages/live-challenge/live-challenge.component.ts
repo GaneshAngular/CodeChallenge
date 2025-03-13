@@ -127,8 +127,8 @@ export class LiveChallengeComponent
         this.socketService.sendData("stream", frameData);
 
         // Use requestAnimationFrame for better frame timing
+        requestAnimationFrame(sendFrame);
         if (this.activeSession.status !== "completed") {
-          requestAnimationFrame(sendFrame);
         }
       };
 
