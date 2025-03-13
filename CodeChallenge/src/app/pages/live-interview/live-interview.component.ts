@@ -32,6 +32,7 @@ export class LiveInterviewComponent implements OnInit {
    sessionService=inject(SessionService)
    socketService=inject(SocketIoService)
    videoData:any=[]
+   stream:any
 @ViewChild('video') videoElement!: ElementRef<HTMLVideoElement>;
   sessionForm=new FormGroup({
       title:new FormControl('',[Validators.required,Validators.pattern(/^[a-zA-Z0-9\s]{2,}$/)]),
@@ -53,6 +54,8 @@ document.addEventListener('paste', (event) => event.preventDefault());
 
     this.socketService.getResponse('stream').subscribe((stream:any)=>{
       console.log(stream)
+
+      this.stream=stream
       this.videoData.push(stream.frameData)
       // this.videoElement.nativeElement.src = stream;
         this.displayRemoteVideo()
