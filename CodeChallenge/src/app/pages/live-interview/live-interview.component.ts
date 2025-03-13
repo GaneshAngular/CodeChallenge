@@ -56,7 +56,7 @@ document.addEventListener('paste', (event) => event.preventDefault());
       console.log(stream)
 
       this.stream=stream
-      this.videoData.push(stream.frameData)
+      this.videoData.push(stream)
       // this.videoElement.nativeElement.src = stream;
         this.displayRemoteVideo()
     })
