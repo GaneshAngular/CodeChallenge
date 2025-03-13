@@ -58,13 +58,13 @@ document.addEventListener('paste', (event) => event.preventDefault());
     })
 
     this.socketService.getResponse('stream').subscribe((stream:any)=>{
-    
 
-      this.stream=stream
 
-      this.videoData.push(stream)
+      // this.stream=stream
+
+      // this.videoData.push(stream)
       // this.videoElement.nativeElement.src = stream;
-        this.displayRemoteVideo()
+        // this.displayRemoteVideo()
         this.displayImageFrame(stream)
     })
 
