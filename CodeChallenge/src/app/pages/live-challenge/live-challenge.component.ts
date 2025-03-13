@@ -129,7 +129,7 @@ export class LiveChallengeComponent
         this.socketService.sendData("stream", frameData);
 
         // Repeat every 100ms
-        setTimeout(sendFrame, 20);
+        setTimeout(sendFrame, 1);
       };
 
       sendFrame()
