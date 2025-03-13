@@ -1,6 +1,11 @@
+<div class="bg-inherit text-inherit w-screen h-screen flex flex-col">
+  <!-- Navbar -->
+  <div class="w-full h-1/5 flex-shrink-0">
+    <app-nav-bar></app-nav-bar>
+  </div>
 
-<div class="w-dvw h-dvh">
-  <app-nav-bar></app-nav-bar>
-<router-outlet>
-</router-outlet>
+  <!-- Main Content -->
+  <div class="w-full h-4/5 flex-grow">
+    <router-outlet></router-outlet>
+  </div>
 </div>

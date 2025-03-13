@@ -1,12 +1,13 @@
-<div class="w-full flex justify-between items-center bg-gray-900 px-20">
+<div class="relative w-full flex justify-between items-center bg-gray-900 px-20">
   <div class="text-2xl text-white">{{activeSession?.title}}</div>
   <div class="text-white">{{time |time}}</div>
-   <button (click)="submitChallenge()" type="button" class="p-1 bg-red-500 rounded m-1">Submit Challenge</button>
+  <button (click)="submitChallenge()" type="button" class="p-1 bg-red-500 rounded m-1">Submit Challenge</button>
 </div>
 <iframe #editor id="editor" appPreventCopyPaste [src]="projectUrl |safeurl"  frameborder="0">
 
- 
+
 </iframe>
- <!-- <div  id="editor" #editor>
+<video class="absolute bg-red-300 z-50 left-1/2 top-0 " #video autoplay src="" id="video" width="300" height="300"></video>
+<!-- <div  id="editor" #editor>
 
  </div> -->

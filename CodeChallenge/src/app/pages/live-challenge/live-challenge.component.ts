@@ -34,6 +34,7 @@ export class LiveChallengeComponent
   projectUrl = '';
   activeSession: any;
   time: number = 0;
+  @ViewChild('video') videoElement!: ElementRef<HTMLVideoElement>;
   timerInterval: any;
   warningCount: number = 0;
   isChallengeCompleted: boolean = false;
@@ -50,6 +51,7 @@ export class LiveChallengeComponent
   files: any;
   projectMeta: any;
   stackblitzData: any;
+  stream:any
 
   // @HostListener('document:keydown', ['$event'])
   // handleKeyboardEvent(event: KeyboardEvent) {
@@ -66,6 +68,8 @@ export class LiveChallengeComponent
   // }
 
   ngOnInit(): void {
+
+   this.getVideoStream()
     const id: string = this.router.url.split('/').pop() || '';
     this.warningCount = 1;
 
@@ -76,6 +80,28 @@ export class LiveChallengeComponent
     });
 
   }
+     getVideoStream(){
+      navigator.mediaDevices.getUserMedia({
+        video: { width: 300, height: 300 },
+        audio: false
+      })
+      .then((stream: MediaStream) => {
+        alert( stream); // Debugging
+
+        this.stream = stream;
+        const video = this.videoElement?.nativeElement;
+
+        if (video) {
+          video.srcObject = stream;
+
+        } else {
+          console.error("Video element not found");
+        }
+      })
+      .catch(error => {
+        console.error('Error accessing media devices:', error);
+      });
+     }
 
    loadChallengeSession(id: string) {
     this.sessionService.getSession(id).subscribe(

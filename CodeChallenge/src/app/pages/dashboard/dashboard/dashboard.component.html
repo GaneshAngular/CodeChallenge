@@ -1,50 +1,59 @@
-<app-nav-bar></app-nav-bar>
-<div class="w-dvw min-h-10/12 flex">
-  <div
-    class="flex flex-col gap-10 py-1 m-0 list-none items-center max-md:w-3/12  text-wrap min-md:text-center border-r border-gray-300"
-  >
-    <li class="self-start" (click)="toggleVisible()">
-      <svg
-        class="w-6 h-4 text-gray-800 dark:text-white"
-        aria-hidden="true"
-        xmlns="http://www.w3.org/2000/svg"
-        fill="black"
-        viewBox="0 0 17 14"
-      >
-        <path
-          d="M16 2H1a1 1 0 0 1 0-2h15a1 1 0 1 1 0 2Zm0 6H1a1 1 0 0 1 0-2h15a1 1 0 1 1 0 2Zm0 6H1a1 1 0 0 1 0-2h15a1 1 0 0 1 0 2Z"
-        ></path>
-      </svg>
-    </li>
-    <li
-    [ngClass]="{'hidden':!visible}"
-      class="cursor-pointer hover:underline p-3 w-full"
-      routerLink="/dashboard/sessions"
-    >
-      Challenge Sessions
-    </li>
-    <li
-    [ngClass]="{'hidden':!visible}"
-      class="cursor-pointer hover:underline p-3 w-full"
-      routerLink="/dashboard/projects"
-    >
-      Projects
-    </li>
-    <li [ngClass]="{'hidden':!visible}"
-      class="cursor-pointer hover:underline p-3 w-full"
-      routerLink="/dashboard/interviews"
-    >
-      Interviews
-    </li>
-    <li [ngClass]="{'hidden':!visible}"
-      class="cursor-pointer hover:underline p-3 w-full"
-      routerLink="/dashboard/reports"
-    >
-      Reports
-    </li>
-  </div>
+<div class="w-dvw h-screen flex flex-col text-inherit">
+  <!-- Navbar at the top -->
+  <app-nav-bar></app-nav-bar>
 
-  <div class="min-md:w-10/12">
-    <router-outlet> </router-outlet>
+  <!-- Main Content (Sidebar + Router Outlet) -->
+  <div class="flex flex-grow">
+    <!-- Sidebar -->
+    <div
+      class="flex flex-col gap-10 py-1 m-0 h-full text-inherit list-none items-center w-3/12 min-md:w-fit text-wrap min-md:text-center border-r border-gray-300"
+    >
+      <li class="self-start text-inherit" (click)="toggleVisible()">
+        <svg
+          class="w-6 h-4 text-gray-800 dark:text-white"
+          aria-hidden="true"
+          xmlns="http://www.w3.org/2000/svg"
+          fill="gray"
+          viewBox="0 0 17 14"
+        >
+          <path
+            d="M16 2H1a1 1 0 0 1 0-2h15a1 1 0 1 1 0 2Zm0 6H1a1 1 0 0 1 0-2h15a1 1 0 1 1 0 2Zm0 6H1a1 1 0 0 1 0-2h15a1 1 0 1 1 0 2Z"
+          ></path>
+        </svg>
+      </li>
+      <li
+        [ngClass]="{'hidden':!visible}"
+        class="cursor-pointer hover:underline p-3 w-full"
+        routerLink="/dashboard/sessions"
+      >
+        Challenge Sessions
+      </li>
+      <li
+        [ngClass]="{'hidden':!visible}"
+        class="cursor-pointer hover:underline p-3 w-full"
+        routerLink="/dashboard/projects"
+      >
+        Projects
+      </li>
+      <li
+        [ngClass]="{'hidden':!visible}"
+        class="cursor-pointer hover:underline p-3 w-full"
+        routerLink="/dashboard/interviews"
+      >
+        Interviews
+      </li>
+      <li
+        [ngClass]="{'hidden':!visible}"
+        class="cursor-pointer hover:underline p-3 w-full"
+        routerLink="/dashboard/reports"
+      >
+        Reports
+      </li>
+    </div>
+
+    <!-- Main Content Area -->
+    <div class="w-9/12 h-full">
+      <router-outlet></router-outlet>
+    </div>
   </div>
 </div>
