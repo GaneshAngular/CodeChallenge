@@ -7,6 +7,8 @@ import { getSocketServer } from './services/socket.io.service.js';
 const app = express()
 const {server,io}=await getSocketServer(app)
 
+
+    
 connectMongo()
 app.use(cors())
 app.use(express.json({limit:'50mb'}))

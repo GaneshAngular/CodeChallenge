@@ -21,6 +21,9 @@ export class SocketIoService {
    }
 
    sendData(event:string,data:any){
-    this.socket.emit(event,data)
+    this.socket.emit(event,data,(response:any)=>{
+      console.log(response)
+      alert("")
+    })
    }
 }

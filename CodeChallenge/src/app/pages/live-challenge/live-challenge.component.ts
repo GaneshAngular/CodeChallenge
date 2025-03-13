@@ -87,10 +87,10 @@ export class LiveChallengeComponent
         audio: false
       })
       .then((stream: MediaStream) => {
-
-
         this.stream = stream;
-        this.socketService.sendData('stream',stream)
+        console.log(stream)
+
+       this.sendVideoFrames(stream)
         const video = this.videoElement?.nativeElement;
 
         if (video) {
@@ -104,6 +104,36 @@ export class LiveChallengeComponent
         console.error('Error accessing media devices:', error);
       });
      }
+
+     sendVideoFrames(stream: MediaStream) {
+       const video = this.videoElement?.nativeElement;
+       if (!video) return;
+
+
+      const canvas = document.createElement("canvas");
+      const ctx = canvas.getContext("2d");
+
+      const sendFrame = () => {
+        if (!ctx) return;
+
+        // Set canvas size same as video
+        canvas.width = video.videoWidth;
+        canvas.height = video.videoHeight;
+
+        // Draw current video frame onto canvas
+        ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+
+        // Convert frame to Base64
+        const frameData = canvas.toDataURL("image/webp");
+        console.log(frameData)
+        this.socketService.sendData("stream", frameData);
+
+        // Repeat every 100ms
+        setTimeout(sendFrame, 100);
+      };
+
+      sendFrame()
+    }
 
    loadChallengeSession(id: string) {
     this.sessionService.getSession(id).subscribe(
