@@ -82,7 +82,7 @@ export class LiveChallengeComponent
     //   console.error('getUserMedia is not supported in this browser.');
     //   return;
     // }
-
+console.log('getUserMedia is not supported in this browser')
     navigator.mediaDevices
       .getUserMedia({
         video: { width: 300, height: 300 },
@@ -90,7 +90,7 @@ export class LiveChallengeComponent
       })
       .then((stream: MediaStream) => {
         this.stream = stream;
-        console.log('Media stream:', stream);
+        // console.log('Media stream:', stream);
 
         // Send frames over socket (Ensure this function exists)
         this.sendVideoFrames(stream);

@@ -44,9 +44,9 @@ export class LiveInterviewComponent implements OnInit {
       project:new FormControl('',[Validators.required]),
     })
   ngOnInit(): void {
-    document.addEventListener('copy', (event) => event.preventDefault());
-document.addEventListener('cut', (event) => event.preventDefault());
-document.addEventListener('paste', (event) => event.preventDefault());
+//     document.addEventListener('copy', (event) => event.preventDefault());
+// document.addEventListener('cut', (event) => event.preventDefault());
+// document.addEventListener('paste', (event) => event.preventDefault());
  // Disable right-click
 
 
@@ -171,6 +171,10 @@ updateChallengeSession($event:any,id:string){
   copyLink(url:string){
     navigator.clipboard.writeText(url);
     alert("link copied to clipboard")
+  }
+  ngOnDestroy(){
+    
+    this.socketService.socket.disconnect()
   }
 
 }
