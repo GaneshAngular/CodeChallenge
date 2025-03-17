@@ -56,6 +56,7 @@ document.addEventListener('paste', (event) => event.preventDefault());
     this.socketService.getResponse('update-interview').subscribe((data:any)=>{
     this.loadInterview(id)
     })
+    this.socketService.sendData('join',"67c041867011dbdbcd8cedba")
 
     this.socketService.getResponse('stream').subscribe((stream:any)=>{
 
