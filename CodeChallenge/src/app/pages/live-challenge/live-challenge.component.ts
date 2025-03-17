@@ -51,8 +51,7 @@ export class LiveChallengeComponent
   files: any;
   projectMeta: any;
   stackblitzData: any;
-  stream:any
-
+  stream: any;
 
   // @HostListener('document:keydown', ['$event'])
   // handleKeyboardEvent(event: KeyboardEvent) {
@@ -69,78 +68,87 @@ export class LiveChallengeComponent
   // }
 
   ngOnInit(): void {
-
-   this.getVideoStream()
+    this.getVideoStream();
     const id: string = this.router.url.split('/').pop() || '';
     this.warningCount = 1;
 
     this.loadChallengeSession(id);
     this.socketService.getResponse('update-interview').subscribe((response) => {
-
       this.loadChallengeSession(id);
     });
-
   }
-     getVideoStream(){
-      navigator.mediaDevices.getUserMedia({
+  getVideoStream() {
+    if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+      console.error('getUserMedia is not supported in this browser.');
+      return;
+    }
+
+    navigator.mediaDevices
+      .getUserMedia({
         video: { width: 300, height: 300 },
-        audio: true
+        audio: true,
       })
       .then((stream: MediaStream) => {
         this.stream = stream;
-        console.log(stream)
+        console.log('Media stream:', stream);
 
-       this.sendVideoFrames(stream)
+        // Send frames over socket (Ensure this function exists)
+        this.sendVideoFrames(stream);
+
         const video = this.videoElement?.nativeElement;
-
         if (video) {
           video.srcObject = stream;
-
         } else {
-          console.error("Video element not found");
+          console.error('Video element not found');
         }
       })
-      .catch(error => {
+      .catch((error) => {
         console.error('Error accessing media devices:', error);
-      });
-     }
-
-     sendVideoFrames(stream: MediaStream) {
-       const video = this.videoElement?.nativeElement;
-       if (!video) return;
-
-
-      const canvas = document.createElement("canvas");
-      const ctx = canvas.getContext("2d");
-
-      const sendFrame = () => {
-        if (!ctx) return;
-
-        // Set canvas size same as video
-        canvas.width = video.videoWidth;
-        canvas.height = video.videoHeight;
-
-        // Draw current video frame onto canvas
-        ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
-
-        // Convert frame to Base64
-        const frameData = canvas.toDataURL("image/webp");
-        console.log(frameData)
-        this.socketService.sendData("stream", {userId:"67c041867011dbdbcd8cedba",stream:frameData});
-
-        // Repeat every 100ms
-        if(this.activeSession.status!=='completed'){
-          const frameLoad=setTimeout(sendFrame,33);
+        if (error.name === 'NotAllowedError') {
+          alert('Please allow access to the camera and microphone.');
+        } else if (error.name === 'NotFoundError') {
+          alert('No camera or microphone found.');
         }
+      });
+  }
 
-      };
+  sendVideoFrames(stream: MediaStream) {
+    const video = this.videoElement?.nativeElement;
+    if (!video) return;
 
-      sendFrame()
-    }
+    const canvas = document.createElement('canvas');
+    const ctx = canvas.getContext('2d');
 
-   loadChallengeSession(id: string) {
+    const sendFrame = () => {
+      if (!ctx) return;
+
+      // Set canvas size same as video
+      canvas.width = video.videoWidth;
+      canvas.height = video.videoHeight;
+
+      // Draw current video frame onto canvas
+      ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+
+      // Convert frame to Base64
+      const frameData = canvas.toDataURL('image/webp');
+      console.log(frameData);
+      this.socketService.sendData('stream', {
+        userId: '67c041867011dbdbcd8cedba',
+        stream: frameData,
+      });
+
+      // Repeat every 100ms
+      if (this.activeSession.status !== 'completed') {
+        const frameLoad = setTimeout(sendFrame, 33);
+      }
+    };
+
+    sendFrame();
+  }
+
+  loadChallengeSession(id: string) {
     this.sessionService.getSession(id).subscribe(
-      async(res: any) => {
+      async (res: any) => {
         this.activeSession = res;
         if (this.activeSession.status == 'completed') {
           this.isSessionEnded = true;
@@ -161,10 +169,10 @@ export class LiveChallengeComponent
       }
     );
   }
- async loadProject(files: any) {
+  async loadProject(files: any) {
     this.files = files;
     console.log(this.files);
-   this.vm=await sdk.embedProject(
+    this.vm = await sdk.embedProject(
       'editor',
       {
         files,
@@ -177,8 +185,7 @@ export class LiveChallengeComponent
         // openFile: 'package.json',
         height: 672,
       }
-    )
-
+    );
   }
 
   updateSession(id: string) {
@@ -239,7 +246,6 @@ export class LiveChallengeComponent
     // window.removeEventListener('beforeunload', (event: any) =>
     //   event.preventDefault()
     // );
-
   }
 
   getProjectId(url: string) {
@@ -260,34 +266,27 @@ export class LiveChallengeComponent
   }
 
   async createNewProject(projectId: string) {
+    this.vm = await sdk.embedProjectId('editor', projectId, {
+      forceEmbedLayout: true,
+      openFile: 'package.json',
+      height: 672,
+    });
 
-    this.vm=await sdk
-      .embedProjectId('editor', projectId, {
-        forceEmbedLayout: true,
-        openFile: 'package.json',
-        height: 672,
-      })
+    this.files = await this.vm.getFsSnapshot();
+    // Extract template dynamically based on project files or StackBlitz settings
+    // const detectedTemplate = this.detectProjectTemplate(files);
 
-
-        this.files= await this.vm.getFsSnapshot()
-          // Extract template dynamically based on project files or StackBlitz settings
-          // const detectedTemplate = this.detectProjectTemplate(files);
-
-          this.stackblitzData = {
-            files:this.files,
-            title: 'Forked StackBlitz Project',
-            description: 'Dynamically forked from StackBlitz',
-            template: this.detectProjectTemplate(this.files), // Set the correct template dynamically
-          };
-
-
-
-
+    this.stackblitzData = {
+      files: this.files,
+      title: 'Forked StackBlitz Project',
+      description: 'Dynamically forked from StackBlitz',
+      template: this.detectProjectTemplate(this.files), // Set the correct template dynamically
+    };
   }
 
   async saveProject() {
     let lastOpenFile = '';
-   let file=await  this.vm.getFsSnapshot()
+    let file = await this.vm.getFsSnapshot();
     // sdk
     //   .connect(document.getElementById('editor') as HTMLIFrameElement)
     //   .then((editor) => {
@@ -304,12 +303,13 @@ export class LiveChallengeComponent
 
     console.log('Saving updated files:', file); // Debugging
     const params = new HttpParams().set('id', this.activeSession._id);
-     if(this.vm)
-    this.sessionService
-      .updateSession({ code:file }, params)
-      .subscribe((res: any) => {
-        console.log(res);
-      },(err:any)=>console.log(err));
+    if (this.vm)
+      this.sessionService.updateSession({ code: file }, params).subscribe(
+        (res: any) => {
+          console.log(res);
+        },
+        (err: any) => console.log(err)
+      );
   }
 
   // Function to detect StackBlitz template
