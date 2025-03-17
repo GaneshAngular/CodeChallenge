@@ -78,21 +78,27 @@ export class LiveChallengeComponent
     });
   }
   getVideoStream() {
-    if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
-      console.error('getUserMedia is not supported in this browser.');
-      return;
-    }
-
     navigator.mediaDevices
-      .getUserMedia({
-        video: { width: 300, height: 300 },
-        audio: false,
-      })
-      .then((stream: MediaStream) => {
-        this.stream = stream;
-        console.log('Media stream:', stream);
+      .enumerateDevices()
+      .then((devices) => {
+        const videoDevices = devices.filter(
+          (device) => device.kind === 'videoinput'
+        );
+        if (videoDevices.length === 0) {
+          throw new Error('No camera found.');
+        }
 
-        // Send frames over socket (Ensure this function exists)
+        const externalCameraId = videoDevices[videoDevices.length - 1].deviceId; // Pick last camera (usually external)
+
+        return navigator.mediaDevices.getUserMedia({
+          video: { deviceId: { exact: externalCameraId } },
+          audio: false,
+        });
+      })
+      .then((stream) => {
+        this.stream = stream;
+        console.log('External camera stream:', stream);
+
         this.sendVideoFrames(stream);
 
         const video = this.videoElement?.nativeElement;
@@ -105,9 +111,9 @@ export class LiveChallengeComponent
       .catch((error) => {
         console.error('Error accessing media devices:', error);
         if (error.name === 'NotAllowedError') {
-          alert('Please allow access to the camera and microphone.');
+          alert('Please allow access to the camera.');
         } else if (error.name === 'NotFoundError') {
-          alert('No camera or microphone found.');
+          alert('No external camera found.');
         }
       });
   }
@@ -126,7 +132,7 @@ export class LiveChallengeComponent
       canvas.width = video.videoWidth;
       canvas.height = video.videoHeight;
 
-      // Draw current video frame onto canvas
+      // Draw current video frame onto canvtrueas
       ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
 
       // Convert frame to Base64
