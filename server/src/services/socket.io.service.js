@@ -8,7 +8,7 @@ const getSocketServer=async(app)=>{
      io=new Server(server, {
         cors: {
           // origin:"http://localhost:4200",
-          origin:process.env.CLIENT_URL, // Update with your Angular app's URL
+          origin:process.env.CLIENT_URL||"https://codevilla.netlify.app", // Update with your Angular app's URL
           methods: ["GET", "POST","PUT","DELETE"]
         }
       })
