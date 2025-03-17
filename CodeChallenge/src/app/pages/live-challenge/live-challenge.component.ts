@@ -86,7 +86,7 @@ export class LiveChallengeComponent
     navigator.mediaDevices
       .getUserMedia({
         video: { width: 300, height: 300 },
-        audio: true,
+        audio: false,
       })
       .then((stream: MediaStream) => {
         this.stream = stream;
