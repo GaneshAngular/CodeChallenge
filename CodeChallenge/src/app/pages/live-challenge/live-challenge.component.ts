@@ -78,27 +78,21 @@ export class LiveChallengeComponent
     });
   }
   getVideoStream() {
+    // if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+    //   console.error('getUserMedia is not supported in this browser.');
+    //   return;
+    // }
+
     navigator.mediaDevices
-      .enumerateDevices()
-      .then((devices) => {
-        const videoDevices = devices.filter(
-          (device) => device.kind === 'videoinput'
-        );
-        if (videoDevices.length === 0) {
-          throw new Error('No camera found.');
-        }
-
-        const externalCameraId = videoDevices[videoDevices.length - 1].deviceId; // Pick last camera (usually external)
-
-        return navigator.mediaDevices.getUserMedia({
-          video: { deviceId: { exact: externalCameraId } },
-          audio: false,
-        });
+      .getUserMedia({
+        video: { width: 300, height: 300 },
+        audio: false,
       })
-      .then((stream) => {
+      .then((stream: MediaStream) => {
         this.stream = stream;
-        console.log('External camera stream:', stream);
+        console.log('Media stream:', stream);
 
+        // Send frames over socket (Ensure this function exists)
         this.sendVideoFrames(stream);
 
         const video = this.videoElement?.nativeElement;
@@ -111,9 +105,9 @@ export class LiveChallengeComponent
       .catch((error) => {
         console.error('Error accessing media devices:', error);
         if (error.name === 'NotAllowedError') {
-          alert('Please allow access to the camera.');
+          alert('Please allow access to the camera and microphone.');
         } else if (error.name === 'NotFoundError') {
-          alert('No external camera found.');
+          alert('No camera or microphone found.');
         }
       });
   }
