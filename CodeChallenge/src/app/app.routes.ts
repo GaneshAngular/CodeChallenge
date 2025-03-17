@@ -1,16 +1,18 @@
 import { Routes } from '@angular/router';
 import { restrictChallengePageGuard } from './core/guards/challengePage/restrict-challenge-page.guard';
+import { isLoggedGuard } from './core/guards/isLogged/is-logged.guard';
 
 
 export const routes: Routes = [{
     path: '',
     redirectTo: 'dashboard',
     pathMatch: 'full'
-  
+
 },
   {
   path: 'dashboard',
   loadComponent: () => import('./pages/dashboard/dashboard/dashboard.component').then(m => m.DashboardComponent),
+  canActivate:[isLoggedGuard],
   children:[
     {
       path:'',
@@ -29,7 +31,8 @@ export const routes: Routes = [{
   ]
 },{
   path:'login',
-  loadComponent: () => import('./pages/login/login.component').then(m => m.LoginComponent)
+  loadComponent: () => import('./pages/login/login.component').then(m => m.LoginComponent),
+  canActivate:[isLoggedGuard]
 },
 // ,{
 //   path:'live/challenge/expired',

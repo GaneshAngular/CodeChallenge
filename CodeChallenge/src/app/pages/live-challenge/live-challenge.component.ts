@@ -84,7 +84,7 @@ export class LiveChallengeComponent
      getVideoStream(){
       navigator.mediaDevices.getUserMedia({
         video: { width: 300, height: 300 },
-        audio: false
+        audio: true
       })
       .then((stream: MediaStream) => {
         this.stream = stream;
@@ -126,7 +126,7 @@ export class LiveChallengeComponent
         // Convert frame to Base64
         const frameData = canvas.toDataURL("image/webp");
         console.log(frameData)
-        this.socketService.sendData("stream", frameData);
+        this.socketService.sendData("stream", {userId:"67c041867011dbdbcd8cedba",stream:frameData});
 
         // Repeat every 100ms
         if(this.activeSession.status!=='completed'){

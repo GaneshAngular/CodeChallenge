@@ -1,4 +1,5 @@
 import interviewModel from "../models/interview.model.js"
+
 import { io } from "../services/socket.io.service.js"
 
 
@@ -21,7 +22,7 @@ const getAllInterviews = async (req, res) => {
     const limit = parseInt(req.query.limit) || 10;  
     const skip = (page - 1) * limit;
     const searchTitle = req.query.title ? { candidateName: { $regex: req.query.title, $options: "i" } } : {};
-    
+   const id=req.user._id;
     try {
         // Get total count of filtered results
         const totalPages = await interviewModel.countDocuments(searchTitle);

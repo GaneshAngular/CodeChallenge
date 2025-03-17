@@ -4,6 +4,7 @@ import cors from 'cors'
 import express from 'express'
 import apiRoute from './routes/api.routes.js';
 import { getSocketServer } from './services/socket.io.service.js';
+import authenticationMiddleware from './middleware/authentication.middleware.js';
 const app = express()
 const {server,io}=await getSocketServer(app)
 
@@ -20,7 +21,7 @@ app.get('/welcome',(req,res)=>{
 })
                  
         
-app.use('/api',apiRoute)
+app.use('/api',authenticationMiddleware,apiRoute)
      
 server.listen(process.env.PORT,()=>{
     console.log(`server listening on ${process.env.PORT}`)
