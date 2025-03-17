@@ -1,3 +1,5 @@
+import { environment } from "../../../environments/environment"
+
 const INTERVIEW_API={
    api:'/api/interview',
    updateSession:'/api/interview/session'
@@ -17,8 +19,8 @@ const AUTH_API={
   logout:'/api/auth/logout'
 }
 
-const SERVER_URL='https://codechallenge-9dq3.onrender.com'
-// const SERVER_URL='http://localhost:8080'
+// const SERVER_URL='https://codechallenge-9dq3.onrender.com'
+const SERVER_URL=environment.server_url|| 'http://localhost:8080'
 
 
 export {INTERVIEW_API, SESSION_API, PROJECT_API,AUTH_API,SERVER_URL,CODE_CHALLENGE_URL}

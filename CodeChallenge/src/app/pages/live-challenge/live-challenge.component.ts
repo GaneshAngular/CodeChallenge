@@ -85,7 +85,7 @@ export class LiveChallengeComponent
 console.log('getUserMedia is not supported in this browser')
     navigator.mediaDevices
       .getUserMedia({
-        video: { width: 300, height: 300 },
+        video: { width: 200, height: 150 },
         audio: false,
       })
       .then((stream: MediaStream) => {

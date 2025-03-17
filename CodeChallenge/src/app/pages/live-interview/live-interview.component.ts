@@ -14,59 +14,59 @@ import { TimePipe } from '../../shared/pipes/timeconverter/time.pipe';
 
 @Component({
   selector: 'app-live-interview',
-  imports: [CommonModule,FormsModule,ReactiveFormsModule,TimePipe],
-templateUrl: './live-interview.component.html',
+  imports: [CommonModule, FormsModule, ReactiveFormsModule, TimePipe],
+  templateUrl: './live-interview.component.html',
   styleUrl: './live-interview.component.css'
 })
 export class LiveInterviewComponent implements OnInit {
 
-   router=inject(Router)
-   interview:any
-   projects:any
-   challengeScore=CHALLENGE_SCORE
-   challengeStatus=['in-progress','completed']
-   sessionModel=false
-   codechallengeUrl=CODE_CHALLENGE_URL
-   interviewService=inject(InterviewerService)
-   projectService=inject(ProjectService)
-   sessionService=inject(SessionService)
-   socketService=inject(SocketIoService)
-   videoData:any=[]
-   stream:any
-@ViewChild('video') videoElement!: ElementRef<HTMLVideoElement>;
-@ViewChild('img') img!: ElementRef<HTMLImageElement>;
-@ViewChild('canvas') remoteVideoCanvas!: ElementRef<HTMLCanvasElement>;
+  router = inject(Router)
+  interview: any
+  projects: any
+  challengeScore = CHALLENGE_SCORE
+  challengeStatus = ['in-progress', 'completed']
+  sessionModel = false
+  codechallengeUrl = CODE_CHALLENGE_URL
+  interviewService = inject(InterviewerService)
+  projectService = inject(ProjectService)
+  sessionService = inject(SessionService)
+  socketService = inject(SocketIoService)
+  videoData: any = []
+  stream: any
+  @ViewChild('video') videoElement!: ElementRef<HTMLVideoElement>;
+  @ViewChild('img') img!: ElementRef<HTMLImageElement>;
+  @ViewChild('canvas') remoteVideoCanvas!: ElementRef<HTMLCanvasElement>;
 
 
 
-  sessionForm=new FormGroup({
-      title:new FormControl('',[Validators.required,Validators.pattern(/^[a-zA-Z0-9\s]{2,}$/)]),
-      project:new FormControl('',[Validators.required]),
-    })
+  sessionForm = new FormGroup({
+    title: new FormControl('', [Validators.required, Validators.pattern(/^[a-zA-Z0-9\s]{2,}$/)]),
+    project: new FormControl('', [Validators.required]),
+  })
   ngOnInit(): void {
-//     document.addEventListener('copy', (event) => event.preventDefault());
-// document.addEventListener('cut', (event) => event.preventDefault());
-// document.addEventListener('paste', (event) => event.preventDefault());
- // Disable right-click
+    //     document.addEventListener('copy', (event) => event.preventDefault());
+    // document.addEventListener('cut', (event) => event.preventDefault());
+    // document.addEventListener('paste', (event) => event.preventDefault());
+    // Disable right-click
 
 
-    const url=this.router.url.split('/')
-    const id:string=url.pop()||''
+    const url = this.router.url.split('/')
+    const id: string = url.pop() || ''
     this.loadInterview(id)
-    this.socketService.getResponse('update-interview').subscribe((data:any)=>{
-    this.loadInterview(id)
+    this.socketService.getResponse('update-interview').subscribe((data: any) => {
+      this.loadInterview(id)
     })
-    this.socketService.sendData('join',"67c041867011dbdbcd8cedba")
+    this.socketService.sendData('join', "67c041867011dbdbcd8cedba")
 
-    this.socketService.getResponse('stream').subscribe((stream:any)=>{
+    this.socketService.getResponse('stream').subscribe((stream: any) => {
 
 
       // this.stream=stream
 
       // this.videoData.push(stream)
       // this.videoElement.nativeElement.src = stream;
-        // this.displayRemoteVideo()
-        this.displayImageFrame(stream)
+      // this.displayRemoteVideo()
+      this.displayImageFrame(stream)
     })
 
 
@@ -86,7 +86,7 @@ export class LiveInterviewComponent implements OnInit {
   }
 
   displayImageFrame(frame: string) {
-    console.log(frame)
+    // console.log(frame)
     const canvas = this.remoteVideoCanvas.nativeElement;
     const ctx = canvas.getContext('2d');
 
@@ -103,46 +103,46 @@ export class LiveInterviewComponent implements OnInit {
     };
   }
 
-  toggleModal(){
-    this.sessionModel=!this.sessionModel;
+  toggleModal() {
+    this.sessionModel = !this.sessionModel;
   }
 
-  loadProjects(){
-    this.projectService.getProjects().subscribe((res:any)=>{
-      this.projects=res.projects
-      this.socketService.sendData('date',"Hello from client")
+  loadProjects() {
+    this.projectService.getProjects().subscribe((res: any) => {
+      this.projects = res.projects
+      this.socketService.sendData('date', "Hello from client")
     })
- }
-
-updateChallengeSession($event:any,id:string){
-  if(!confirm('Are you sure to complete the challenge?')) return
-  const params=new HttpParams().set('id',id)
-  this.sessionService.updateSession({status:$event.target.value},params).subscribe((res:any)=>{
-    alert(res.message)
-    this.loadInterview(this.interview._id)
-  })
-}
-
-
-
-  loadInterview(id:string){
-        this.interviewService.getInterview(id).subscribe((res:any)=>{
-          this.interview=res
-       this.loadProjects()
-
-        },(err:any)=>{
-          this.router.navigate(['/notFound'])
-        })
   }
 
-  createSession(){
-    if(this.sessionForm.invalid) return alert("Invalid Details..!")
+  updateChallengeSession($event: any, id: string) {
+    if (!confirm('Are you sure to complete the challenge?')) return
+    const params = new HttpParams().set('id', id)
+    this.sessionService.updateSession({ status: $event.target.value }, params).subscribe((res: any) => {
+      alert(res.message)
+      this.loadInterview(this.interview._id)
+    })
+  }
 
-    this.sessionService.createSession(this.sessionForm.value).subscribe((res:any)=>{
+
+
+  loadInterview(id: string) {
+    this.interviewService.getInterview(id).subscribe((res: any) => {
+      this.interview = res
+      this.loadProjects()
+
+    }, (err: any) => {
+      this.router.navigate(['/notFound'])
+    })
+  }
+
+  createSession() {
+    if (this.sessionForm.invalid) return alert("Invalid Details..!")
+
+    this.sessionService.createSession(this.sessionForm.value).subscribe((res: any) => {
       alert(res.message)
       this.toggleModal()
-      const params=new HttpParams().set('id',this.interview._id)
-      this.interviewService.updateSession({sessions:[res.data._id]},params).subscribe((res:any)=>{
+      const params = new HttpParams().set('id', this.interview._id)
+      this.interviewService.updateSession({ sessions: [res.data._id] }, params).subscribe((res: any) => {
         this.loadInterview(this.interview._id)
       })
       this.sessionForm.reset()
@@ -150,30 +150,30 @@ updateChallengeSession($event:any,id:string){
 
   }
 
-  updatedScore($event:any,id:string){
-     if(!confirm("Are you sure to update")) return
-    const params=new HttpParams().set('id',id)
-      this.sessionService.updateSession({score:$event.target.value},params).subscribe((res:any)=>{
-        alert(res.message)
-        this.loadInterview(this.interview._id)
-      })
+  updatedScore($event: any, id: string) {
+    if (!confirm("Are you sure to update")) return
+    const params = new HttpParams().set('id', id)
+    this.sessionService.updateSession({ score: $event.target.value }, params).subscribe((res: any) => {
+      alert(res.message)
+      this.loadInterview(this.interview._id)
+    })
   }
 
-  endSession(){
-    if(!confirm('Are you sure to end session?')) return
-    const params=new HttpParams().set('id',this.interview._id)
-    this.interviewService.updateInterview({status:"completed"},params).subscribe((res:any)=>{
+  endSession() {
+    if (!confirm('Are you sure to end session?')) return
+    const params = new HttpParams().set('id', this.interview._id)
+    this.interviewService.updateInterview({ status: "completed" }, params).subscribe((res: any) => {
       alert(res.message)
       this.router.navigate(['/api/dashboard/interviews'])
     })
   }
 
-  copyLink(url:string){
+  copyLink(url: string) {
     navigator.clipboard.writeText(url);
     alert("link copied to clipboard")
   }
-  ngOnDestroy(){
-    
+  ngOnDestroy() {
+
     this.socketService.socket.disconnect()
   }
 
