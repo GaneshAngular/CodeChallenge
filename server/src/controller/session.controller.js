@@ -83,7 +83,7 @@ const updateSession=async(req,res)=>{
 
         // const newSession=await sessionModel.findById(id)
         // if(!newSession) return res.status(500).json({message:"Error updating session"})
-         
+         if(!data.code)
          io.emit('update-interview',"Session updated")
         return res.status(201).json({message:"Session updated",data:session})
     } catch (error) {
