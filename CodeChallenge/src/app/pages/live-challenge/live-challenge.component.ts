@@ -135,7 +135,7 @@ export class LiveChallengeComponent
       const frameData = canvas.toDataURL('image/webp');
       console.log(frameData);
       this.socketService.sendData('stream', {
-        userId: '67c041867011dbdbcd8cedba',
+        userId: this.activeSession.createdBy,
         stream: frameData,
       });
 
