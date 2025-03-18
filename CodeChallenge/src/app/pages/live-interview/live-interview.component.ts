@@ -179,4 +179,6 @@ export class LiveInterviewComponent implements OnInit {
     this.socketService.socket.disconnect()
   }
 
+  
+
 }

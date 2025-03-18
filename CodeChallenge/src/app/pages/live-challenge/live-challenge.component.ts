@@ -149,6 +149,16 @@ export class LiveChallengeComponent
     sendFrame();
   }
 
+  stopCamera(): void {
+    if (this.stream) {
+      const tracks = this.stream.getTracks();
+      tracks.forEach((track:any) => {
+        track.stop(); // Stop each track (video/audio)
+      });
+      this.stream = null;
+    }
+  }
+
   loadChallengeSession(id: string) {
     this.sessionService.getSession(id).subscribe(
       async (res: any) => {
@@ -251,7 +261,7 @@ export class LiveChallengeComponent
     // window.removeEventListener('beforeunload', (event: any) =>
     //   event.preventDefault()
     // );
-
+     this.stopCamera()
   }
 
   getProjectId(url: string) {
@@ -332,4 +342,5 @@ export class LiveChallengeComponent
     if (files['vue.config.js']) return 'vue';
     return 'javascript'; // Default fallback
   }
+
 }
