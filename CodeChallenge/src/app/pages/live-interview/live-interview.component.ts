@@ -11,7 +11,7 @@ import { HttpParams } from '@angular/common/http';
 import { io } from 'socket.io-client';
 import { SocketIoService } from '../../core/services/socket.io/socket.io.service';
 import { TimePipe } from '../../shared/pipes/timeconverter/time.pipe';
- 
+
 @Component({
   selector: 'app-live-interview',
   imports: [CommonModule, FormsModule, ReactiveFormsModule, TimePipe],
@@ -56,7 +56,8 @@ export class LiveInterviewComponent implements OnInit {
     this.socketService.getResponse('update-interview').subscribe((data: any) => {
       this.loadInterview(id)
     })
-    this.socketService.sendData('join', "67c041867011dbdbcd8cedba")
+
+
 
     this.socketService.getResponse('stream').subscribe((stream: any) => {
 
@@ -129,7 +130,7 @@ export class LiveInterviewComponent implements OnInit {
     this.interviewService.getInterview(id).subscribe((res: any) => {
       this.interview = res
       this.loadProjects()
-
+      this.socketService.sendData('join',this.interview.createdBy)
     }, (err: any) => {
       this.router.navigate(['/notFound'])
     })

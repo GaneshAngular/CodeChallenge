@@ -17,6 +17,7 @@ const getSocketServer=async(app)=>{
         //   socket.emit('data',"Hello from server")
 
         socket.on('join',(userId)=>{
+          console.log("User joined",userId)
             user[userId]=socket.id
             console.log(user[userId])
         })
@@ -28,6 +29,7 @@ const getSocketServer=async(app)=>{
           if(userSocketId){
             io.to(userSocketId).emit('stream',stream)
           }else{
+            socket.disconnect()
             console.log("User not found",userId)
           }
          
