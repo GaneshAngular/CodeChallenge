@@ -74,7 +74,8 @@ export class LiveChallengeComponent
     const id: string = this.router.url.split('/').pop() || '';
     this.warningCount = 1;
 
-    this.loadChallengeSession(id);
+    // this.loadChallengeSession(id);
+    this.updateSession(id)
     this.socketService.getResponse('update-interview').subscribe((response) => {
       this.loadChallengeSession(id);
     });
