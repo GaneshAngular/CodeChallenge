@@ -6,7 +6,7 @@ import { io } from "../services/socket.io.service.js"
 
 const createInterview = async (req, res) => {
     try {
-        const data = req.body
+        const data={...req.body,createdBy:req.user._id}
         const interview = await interviewModel.create(data)
         if (!interview) return res.status(500).json({ message: "Error creating interview" })
 

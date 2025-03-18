@@ -24,7 +24,7 @@ const getSocketServer=async(app)=>{
           // console.log("--->",stream)
 
           const userSocketId=user[userId]
-          console.log("User Socket ID",userSocketId)
+          
           if(userSocketId){
             io.to(userSocketId).emit('stream',stream)
           }else{

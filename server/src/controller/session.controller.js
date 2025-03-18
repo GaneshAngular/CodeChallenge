@@ -7,7 +7,7 @@ import { io } from "../services/socket.io.service.js"
 
 const createSession=async(req,res)=>{
     try {
-        const data=req.body
+        const data={...req.body,createdBy:req.user._id}
         const session=await  sessionModel.create(data)
         if(!session) return res.status(500).json({message:"Error creating session"})
 

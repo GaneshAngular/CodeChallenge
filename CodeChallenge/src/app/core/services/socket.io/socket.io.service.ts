@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { io, Socket } from 'socket.io-client';
 import { SERVER_URL } from '../../constants/API';
+import { environment } from '../../../../environments/environment';
 
 @Injectable({
   providedIn: 'root'
@@ -9,7 +10,7 @@ import { SERVER_URL } from '../../constants/API';
 export class SocketIoService {
   socket:Socket
   constructor() {
-    this.socket=io(SERVER_URL)
+    this.socket=io(environment.server_url)
    }
 
    getResponse(event:string){

@@ -4,6 +4,7 @@ import { FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators } 
 import { ProjectService } from '../../../core/services/project/project.service';
 import { HttpParams } from '@angular/common/http';
 import { PaginationComponent } from "../../../shared/components/pagination/pagination.component";
+import { SweetAlertService } from '../../../core/services/sweet-alert/sweet-alert.service';
 
 @Component({
   selector: 'app-project',
@@ -21,6 +22,7 @@ export class ProjectComponent implements OnInit {
   searchTitle=''
  isProjectUpdate=false
   projectService=inject(ProjectService)
+  alertService=inject(SweetAlertService)
   projectForm=new FormGroup({
     title:new FormControl('',[Validators.required,Validators.pattern(/^[a-zA-Z\s]{2,}$/)]),
     skills:new FormControl('',[Validators.required,Validators.pattern(/^[a-zA-Z\,\s]{2,}$/)]),
@@ -60,7 +62,7 @@ export class ProjectComponent implements OnInit {
     this.projectModal=!this.projectModal;
   }
   updateProject(id:string){
-    if(this.projectForm.invalid) return alert("Invalid Details..!")
+    if(this.projectForm.invalid) return this.alertService.toast("info","Invalid Details..!",'top')
       const params=new HttpParams().set('id',id)
     if(confirm('Are you sure'))
       this.projectService.updateProject(this.projectForm.value,params).subscribe((res:any)=>{
@@ -82,10 +84,10 @@ export class ProjectComponent implements OnInit {
   }
 
   createProject(){
-    if(this.projectForm.invalid) return alert("Invalid Details..!")
+    if(this.projectForm.invalid) return  this.alertService.toast("info","Invalid Details..!",'top')
 
       this.projectService.createProject(this.projectForm.value).subscribe((res:any)=>{
-        alert(res.message)
+        this.alertService.toast("success",res.message)
         this.toggleModal()
         this.projectForm.reset()
         this.loadProjects()

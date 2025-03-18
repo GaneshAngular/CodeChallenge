@@ -1,7 +1,8 @@
-import  {Schema, model} from "mongoose";
+import  mongoose, {Schema, model} from "mongoose";
 
 const interviewSchema=new Schema({
     interviewerId:{type:String, required:true},
+    createdBy:{type:mongoose.Schema.Types.ObjectId,required:true},
     candidateName:{type:String, required:true},
     sessions:[{type:Schema.Types.ObjectId,ref:'session',required:true}],
     status:{type:String,enum:["in-progress","inactive","completed"],default:'inactive'},

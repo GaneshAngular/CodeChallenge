@@ -19,6 +19,7 @@ import { TimePipe } from '../../shared/pipes/timeconverter/time.pipe';
 import sdk, { VM } from '@stackblitz/sdk';
 import { PreventCopyPasteDirective } from '../../shared/directives/prevent-copy-paste.directive';
 import { SafeurlPipe } from '../../shared/pipes/safeurl/safeurl.pipe';
+import { SweetAlertService } from '../../core/services/sweet-alert/sweet-alert.service';
 
 @Component({
   selector: 'app-live-challenge',
@@ -35,6 +36,7 @@ export class LiveChallengeComponent
   activeSession: any;
   time: number = 0;
   @ViewChild('video') videoElement!: ElementRef<HTMLVideoElement>;
+  alertService=inject(SweetAlertService)
   timerInterval: any;
   warningCount: number = 0;
   isChallengeCompleted: boolean = false;
@@ -82,10 +84,10 @@ export class LiveChallengeComponent
     //   console.error('getUserMedia is not supported in this browser.');
     //   return;
     // }
-console.log('getUserMedia is not supported in this browser')
+
     navigator.mediaDevices
       .getUserMedia({
-        video: { width: 200, height: 150 },
+        video: { width: 200, height: 100 },
         audio: false,
       })
       .then((stream: MediaStream) => {
@@ -105,9 +107,9 @@ console.log('getUserMedia is not supported in this browser')
       .catch((error) => {
         console.error('Error accessing media devices:', error);
         if (error.name === 'NotAllowedError') {
-          alert('Please allow access to the camera and microphone.');
+          this.alertService.toast("warning",'Please allow access to the camera and microphone.');
         } else if (error.name === 'NotFoundError') {
-          alert('No camera or microphone found.');
+          this.alertService.toast("info",'No camera or microphone found.');
         }
       });
   }
@@ -171,7 +173,7 @@ console.log('getUserMedia is not supported in this browser')
   }
   async loadProject(files: any) {
     this.files = files;
-    console.log(this.files);
+
     this.vm = await sdk.embedProject(
       'editor',
       {
@@ -192,7 +194,9 @@ console.log('getUserMedia is not supported in this browser')
     const params = new HttpParams().set('id', id);
     this.sessionService
       .updateSession({ status: 'in-progess' }, params)
-      .subscribe((res: any) => {});
+      .subscribe((res: any) => {
+
+      });
   }
 
   ngAfterViewInit() {
@@ -218,14 +222,14 @@ console.log('getUserMedia is not supported in this browser')
     }, 1000);
   }
 
-  submitChallenge() {
-    if (!confirm('sure to submit challenge')) return;
+  async submitChallenge() {
+    if (!await this.alertService.confirm('Are you sure to submit challenge',"Yes,Submit","No,wait")) return;
 
     const params = new HttpParams().set('id', this.activeSession?._id);
     this.sessionService
       .updateSession({ status: 'completed', timetaken: this.time }, params)
       .subscribe((res: any) => {
-        alert(res.message);
+        this.alertService.toast("success","Challenge Submitted");
         this.isChallengeCompleted = true;
         this.loadChallengeSession(this.activeSession._id);
         this.router.navigate(['/response/Thank You']);
@@ -246,6 +250,7 @@ console.log('getUserMedia is not supported in this browser')
     // window.removeEventListener('beforeunload', (event: any) =>
     //   event.preventDefault()
     // );
+
   }
 
   getProjectId(url: string) {
@@ -306,6 +311,7 @@ console.log('getUserMedia is not supported in this browser')
     if (this.vm)
       this.sessionService.updateSession({ code: file }, params).subscribe(
         (res: any) => {
+          alert("saved ")
           console.log(res);
         },
         (err: any) => console.log(err)

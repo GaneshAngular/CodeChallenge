@@ -3,7 +3,7 @@ import projectModel from '../models/project.model.js';
 
 const createProject = async (req, res) => {
     try {
-        const data = req.body
+        const data={...req.body,createdBy:req.user._id}
         const project = await projectModel.create(data)
         if (!project) return res.status(500).json({ message: "Error creating project" })
 

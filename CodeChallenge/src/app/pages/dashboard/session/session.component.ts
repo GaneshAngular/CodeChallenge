@@ -5,6 +5,7 @@ import { ProjectService } from '../../../core/services/project/project.service';
 import { SessionService } from '../../../core/services/session/session.service';
 import { HttpParams } from '@angular/common/http';
 import { PaginationComponent } from "../../../shared/components/pagination/pagination.component";
+import { SweetAlertService } from '../../../core/services/sweet-alert/sweet-alert.service';
 
 @Component({
   selector: 'app-session',
@@ -22,6 +23,7 @@ export class SessionComponent implements OnInit {
   limit=5
   searchTitle=''
  isUpdateSession=false
+ alertService=inject(SweetAlertService)
   sessionForm=new FormGroup({
     title:new FormControl('',[Validators.required,Validators.pattern(/^[a-zA-Z0-9\s]{2,}$/)]),
     project:new FormControl('',[Validators.required]),
@@ -61,10 +63,10 @@ projectService=inject(ProjectService)
   }
 
   createSession(){
-    if(this.sessionForm.invalid) return alert("Invalid Details..!")
+    if(this.sessionForm.invalid) return this.alertService.toast("info","Invalid Details..!",'top')
 
     this.sessionService.createSession(this.sessionForm.value).subscribe((res:any)=>{
-      alert(res.message)
+      this.alertService.toast("success",res.message)
       this.toggleModal()
       this.sessionForm.reset()
       this.loadSessions()
@@ -80,17 +82,17 @@ projectService=inject(ProjectService)
       project:this.session.project._id
     })
   }
-  deleteSession(id:string){
+  async deleteSession(id:string){
     const params=new HttpParams().set('id',id)
-    if(confirm('Are you sure'))
+    if(await this.alertService.confirm('Are you sure',"Yes, Delete","No,Cancal"))
     this.sessionService.deleteSession(params).subscribe((res:any)=>{
-      alert(res.message)
+      this.alertService.toast("success",res.message)
       this.loadSessions()
     })
   }
 
   updateSession(id:string){
-     if(this.sessionForm.invalid) return alert("Invalid Details..!")
+     if(this.sessionForm.invalid) return  this.alertService.toast("info","Invalid Details..!",'top')
      const params=new HttpParams().set('id',id)
      this.sessionService.updateSession(this.sessionForm.value,params).subscribe((res:any)=>{
        alert(res.message)
