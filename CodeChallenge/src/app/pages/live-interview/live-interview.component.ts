@@ -11,6 +11,7 @@ import { HttpParams } from '@angular/common/http';
 import { io } from 'socket.io-client';
 import { SocketIoService } from '../../core/services/socket.io/socket.io.service';
 import { TimePipe } from '../../shared/pipes/timeconverter/time.pipe';
+import { SweetAlertService } from '../../core/services/sweet-alert/sweet-alert.service';
 
 @Component({
   selector: 'app-live-interview',
@@ -31,6 +32,7 @@ export class LiveInterviewComponent implements OnInit {
   projectService = inject(ProjectService)
   sessionService = inject(SessionService)
   socketService = inject(SocketIoService)
+  alertService=inject(SweetAlertService)
   videoData: any = []
   stream: any
   @ViewChild('video') videoElement!: ElementRef<HTMLVideoElement>;
@@ -116,10 +118,10 @@ export class LiveInterviewComponent implements OnInit {
   }
 
   updateChallengeSession($event: any, id: string) {
-    if (!confirm('Are you sure to complete the challenge?')) return
+    if (!this.alertService.confirm('Are you sure to complete the challenge?',"Yes,Update","No,Later")) return
     const params = new HttpParams().set('id', id)
     this.sessionService.updateSession({ status: $event.target.value }, params).subscribe((res: any) => {
-      alert(res.message)
+      this.alertService.toast("success",res.message)
       this.loadInterview(this.interview._id)
     })
   }
@@ -137,10 +139,10 @@ export class LiveInterviewComponent implements OnInit {
   }
 
   createSession() {
-    if (this.sessionForm.invalid) return alert("Invalid Details..!")
+    if (this.sessionForm.invalid) return this.alertService.toast("info","Invalid Details..!","top")
 
     this.sessionService.createSession(this.sessionForm.value).subscribe((res: any) => {
-      alert(res.message)
+      this.alertService.toast("success",res.message)
       this.toggleModal()
       const params = new HttpParams().set('id', this.interview._id)
       this.interviewService.updateSession({ sessions: [res.data._id] }, params).subscribe((res: any) => {
@@ -153,32 +155,32 @@ export class LiveInterviewComponent implements OnInit {
   }
 
   updatedScore($event: any, id: string) {
-    if (!confirm("Are you sure to update")) return
+    if (!this.alertService.confirm("Are you sure to update","Yes,Update","No,Later")) return
     const params = new HttpParams().set('id', id)
     this.sessionService.updateSession({ score: $event.target.value }, params).subscribe((res: any) => {
-      alert(res.message)
+      this.alertService.toast("success",res.message)
       this.loadInterview(this.interview._id)
     })
   }
 
   endSession() {
-    if (!confirm('Are you sure to end session?')) return
+    if (!this.alertService.confirm('Are you sure to end session?',"Yes,End","NO,Wait")) return
     const params = new HttpParams().set('id', this.interview._id)
     this.interviewService.updateInterview({ status: "completed" }, params).subscribe((res: any) => {
-      alert(res.message)
+      this.alertService.toast("success",res.message)
       this.router.navigate(['/api/dashboard/interviews'])
     })
   }
 
   copyLink(url: string) {
     navigator.clipboard.writeText(url);
-    alert("link copied to clipboard")
+    this.alertService.toast("info","link copied to clipboard")
   }
   ngOnDestroy() {
 
     this.socketService.socket.disconnect()
   }
 
-  
+
 
 }

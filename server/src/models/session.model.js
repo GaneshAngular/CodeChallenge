@@ -7,6 +7,7 @@ const sessionSchema=new mongoose.Schema({
     project:{type:mongoose.Schema.Types.ObjectId,ref:'project',required:true},
     status:{type:String,enum:SESSION_STATUS,default:'inactive'},
     timetaken:{type:Number},
+    warnings:{type:Number,default:0},
     score:{type:String,enum:CHALLENGE_SCORE},
     code:{type:Object},
     createdAt:{type:Date,default:Date.now}

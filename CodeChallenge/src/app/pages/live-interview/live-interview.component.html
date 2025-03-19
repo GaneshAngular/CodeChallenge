@@ -29,7 +29,9 @@
 
             </div>
             @if (session?.status=='completed') {
-
+                  <div>
+                    <span class="text-lg">Warnings: {{session?.Warnings}}</span>
+                  </div>
               <div>
                 <span for="time" class="text-lg">Time Taken:{{session?.timetaken |time}} MIN</span>
 

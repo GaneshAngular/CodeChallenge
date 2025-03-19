@@ -69,7 +69,19 @@ export class LiveChallengeComponent
   //      alert("bbjfdfdfdvf")
   // }
 
+  @HostListener('document:visibilitychange', ['$event'])
+  onVisibilityChange() {
+    if (document.visibilityState === 'hidden') {
+        localStorage.setItem('wc',this.warningCount+'')
+          this.alertService.toast("warning",`${this.warningCount} of 3 warning don't change tab`,"top")
+          if(this.warningCount++>=3)
+           this.submitChallenge()
+    }
+  }
+
   ngOnInit(): void {
+    this.warningCount=parseInt(localStorage.getItem('wc')||'0')
+    this.time=parseInt(localStorage.getItem('ct')||'0')
     this.getVideoStream();
     const id: string = this.router.url.split('/').pop() || '';
     this.warningCount = 1;
@@ -230,18 +242,22 @@ export class LiveChallengeComponent
     // document.addEventListener("visibilitychange", this.preventPageChange);
     this.timerInterval = setInterval(() => {
       this.time++;
+      localStorage.setItem("ct",this.time+"")
     }, 1000);
   }
 
   async submitChallenge() {
+    if(!(this.warningCount>=3))
     if (!await this.alertService.confirm('Are you sure to submit challenge',"Yes,Submit","No,wait")) return;
 
     const params = new HttpParams().set('id', this.activeSession?._id);
     this.sessionService
-      .updateSession({ status: 'completed', timetaken: this.time }, params)
+      .updateSession({ status: 'completed', timetaken: this.time,warnings:this.warningCount-1 }, params)
       .subscribe((res: any) => {
         this.alertService.toast("success","Challenge Submitted");
         this.isChallengeCompleted = true;
+        localStorage.removeItem('wc')
+        localStorage.removeItem('ct')
         this.loadChallengeSession(this.activeSession._id);
         this.router.navigate(['/response/Thank You']);
       });
