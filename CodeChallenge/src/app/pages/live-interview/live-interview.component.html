@@ -25,8 +25,11 @@
               {{session.title}}
             </div>
             <div class="text-sm text-gray-500 !text-wrap w-full">
-              <div><button type="button" (click)="copyLink(codechallengeUrl+'/'+session?._id)"  class="w-15 h-6 cursor-pointer bg-blue-300">Copy link</button></div>
-
+              <div><button type="button" (click)="copyLink(codechallengeUrl+'/'+session?._id)"  class=" h-6 cursor-pointer bg-blue-300">Challenge link</button></div>
+            </div>
+            <div class="text-sm text-gray-500 !text-wrap w-full">
+              <label for="track">Track Session</label>
+              <div><button type="button" (click)="copyLink(trackSessionUrl+'/'+session?._id)"  class="w-15 h-6 cursor-pointer bg-blue-300">Copy link</button></div>
             </div>
             @if (session?.status=='completed') {
                   <div>

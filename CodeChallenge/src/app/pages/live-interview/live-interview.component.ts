@@ -2,7 +2,7 @@ import { Component, ElementRef, inject, OnInit, ViewChild, viewChild } from '@an
 import { Router } from '@angular/router';
 import { InterviewerService } from '../../core/services/interviewer/interviewer.service';
 import { CommonModule } from '@angular/common';
-import { CODE_CHALLENGE_URL } from '../../core/constants/API';
+import { CODE_CHALLENGE_URL, TRACK_CODE_URL } from '../../core/constants/API';
 import { CHALLENGE_SCORE } from '../../core/constants/type.constant';
 import { ProjectService } from '../../core/services/project/project.service';
 import { FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
@@ -28,6 +28,7 @@ export class LiveInterviewComponent implements OnInit {
   challengeStatus = ['in-progress', 'completed']
   sessionModel = false
   codechallengeUrl = CODE_CHALLENGE_URL
+  trackSessionUrl=TRACK_CODE_URL
   interviewService = inject(InterviewerService)
   projectService = inject(ProjectService)
   sessionService = inject(SessionService)
