@@ -4,7 +4,7 @@
 
     <div class="">Code Challenge</div>
     <div>
-      <nav class="flex max-md:flex-col justify-center items-center gap-3  text-inherit">
+      <nav class="flex  justify-center items-center gap-2  text-inherit">
         <a routerLink="/dashboard" >Dashboard</a>
         <a *ngIf="!isLogged" routerLink="/login">Login</a>
         <a *ngIf="isLogged" (click)="logout()" >Logout</a>
