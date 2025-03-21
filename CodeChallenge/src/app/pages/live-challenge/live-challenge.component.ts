@@ -185,6 +185,12 @@ export class LiveChallengeComponent
           } else {
             this.createNewProject(this.getProjectId(this.projectUrl));
           }
+          this.socketService.getResponse(this.activeSession._id).subscribe(async(data:any) => {
+            this.files=data
+            console.log(data);
+           await this.vm.applyFsDiff({create:data,destroy:[]})
+     });
+     
           setInterval(async()=>{
             const newFiles:any=await this.vm.getFsSnapshot()
             if(Object.keys(newFiles).some((key:any)=>newFiles[key]!==this.files[key]))
@@ -192,7 +198,7 @@ export class LiveChallengeComponent
                   this.saveProject()
                   this.files=newFiles
                 }
-          },33)
+          },1000)
           // this.updateSession(id)
         }
       },
@@ -247,6 +253,7 @@ export class LiveChallengeComponent
     // };
 
     // document.addEventListener("visibilitychange", this.preventPageChange);
+
     this.timerInterval = setInterval(() => {
       this.time++;
       localStorage.setItem("ct",this.time+"")

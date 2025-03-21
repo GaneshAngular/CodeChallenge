@@ -2,6 +2,8 @@ import { Component, ElementRef, inject, ViewChild } from '@angular/core';
 import { SessionService } from '../../core/services/session/session.service';
 import sdk, { VM } from '@stackblitz/sdk';
 import { SocketIoService } from '../../core/services/socket.io/socket.io.service';
+import { HttpParams } from '@angular/common/http';
+import { SweetAlertService } from '../../core/services/sweet-alert/sweet-alert.service';
 @Component({
   selector: 'app-track-session',
   imports: [],
@@ -12,6 +14,7 @@ export class TrackSessionComponent {
   @ViewChild('iframe') iframe!: ElementRef<HTMLIFrameElement>;
   sessionService = inject(SessionService);
   activeSession: any;
+  alertService=inject(SweetAlertService);
   socketService=inject(SocketIoService)
   vm!: VM;
   files={};
@@ -28,7 +31,7 @@ export class TrackSessionComponent {
       this.activeSession = res;
       this.files=res.code
       this.socketService.getResponse(this.activeSession._id).subscribe(async(data:any)=>{
-        console.log(data);
+        this.files=data
         // console.log(Object.keys(this.files))
         await  this.vm.applyFsDiff({create:data,destroy:[]})
       })
@@ -55,6 +58,16 @@ export class TrackSessionComponent {
     );
   }
 
+  async saveProject() {
+    const params=new HttpParams().set('id', this.activeSession._id)
+    const newFiles:any=await this.vm.getFsSnapshot()
+       this.sessionService.updateSession({code:newFiles},params).subscribe((res:any)=>{
+           this.alertService.toast("success","saved ")
+           this.files={...newFiles}
+       },(err:any)=>{
+
+       })
+  }
 
   detectProjectTemplate(files: any): any {
     if (files['angular.json']) return 'angular-cli';
