@@ -185,11 +185,18 @@ export class LiveChallengeComponent
           } else {
             this.createNewProject(this.getProjectId(this.projectUrl));
           }
-
+          setInterval(async()=>{
+            const newFiles:any=await this.vm.getFsSnapshot()
+            if(Object.keys(newFiles).some((key:any)=>newFiles[key]!==this.files[key]))
+                {
+                  this.saveProject()
+                  this.files=newFiles
+                }
+          },33)
           // this.updateSession(id)
         }
       },
-      (err: any) => {
+      (err: any) =>  {
         this.router.navigate(['/notFound']);
       }
     );
@@ -338,7 +345,7 @@ export class LiveChallengeComponent
     if (this.vm)
       this.sessionService.updateSession({ code: file }, params).subscribe(
         (res: any) => {
-          this.alertService.toast("success","saved ")
+          // this.alertService.toast("success","saved ")
           console.log(res);
         },
         (err: any) => console.log(err)

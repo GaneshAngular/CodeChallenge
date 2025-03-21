@@ -50,6 +50,9 @@ export const routes: Routes = [{
   path:'response/:message',
   loadComponent: () => import('./pages/session-end/session-end.component').then(m => m.SessionEndComponent)
 },{
+  path:'track-session/:id',
+  loadComponent: () => import('./pages/track-session/track-session.component').then(m => m.TrackSessionComponent)
+},{
   path:'notFound',
   loadComponent:()=>import('./pages/not-found-404/not-found-404.component').then(m=>m.NotFound404Component)
 }

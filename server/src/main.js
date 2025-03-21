@@ -5,6 +5,7 @@ import express from 'express'
 import apiRoute from './routes/api.routes.js';
 import { getSocketServer } from './services/socket.io.service.js';
 import authenticationMiddleware from './middleware/authentication.middleware.js';
+import logsMiddleware from './middleware/logs.middleware.js';
 const app = express()
 const { server, io } = await getSocketServer(app)
 
@@ -21,7 +22,7 @@ app.get('/welcome', (req, res) => {
 })
 
 
-app.use('/api', authenticationMiddleware, apiRoute)
+app.use('/api', authenticationMiddleware,logsMiddleware, apiRoute)
 
 server.listen(process.env.PORT, () => {
     console.log(`server listening on ${process.env.PORT}`)

@@ -78,13 +78,15 @@ const updateSession=async(req,res)=>{
     try {
         const data=req.body
         const {id}=req.query
-        const session=await sessionModel.findByIdAndUpdate(id,data)
+        const session=await sessionModel.findByIdAndUpdate(id,data,{new:true})
         if(!session) return res.status(404).json({message:"Session not found"})
 
         // const newSession=await sessionModel.findById(id)
         // if(!newSession) return res.status(500).json({message:"Error updating session"})
          if(!data.code)
          io.emit('update-interview',"Session updated")
+         else
+          io.emit(id,session.code)
         return res.status(201).json({message:"Session updated",data:session})
     } catch (error) {
         console.log(error)
