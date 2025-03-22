@@ -24,6 +24,10 @@ export class SessionService {
   getSession(id:string) {
     return this.httpService.get(SESSION_API.api+"/"+id);
   }
+
+  getCount() {
+    return this.httpService.get(SESSION_API.api+"/count");
+  }
   getSessions(params?:HttpParams) {
     return this.httpService.get(SESSION_API.api, params);
   }

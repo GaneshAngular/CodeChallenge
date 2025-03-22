@@ -93,6 +93,18 @@ const updateSession=async(req,res)=>{
         return res.status(500).json({message:"Server Error"})
     }
 }
+const getCount=async (req, res) => {
+    try {
+        
+        const session = await sessionModel.countDocuments()
+     
+        return res.json({count: session})
+    } catch (error) {
+        console.log(error)
+        return res.status(500).json({ message: "Servr Error" })
+    }
+ 
+}
 
 const deleteSession=async(req,res)=>{
     try {
@@ -107,4 +119,4 @@ const deleteSession=async(req,res)=>{
     }
 }
 
-export {createSession,getSessions,updateSession,deleteSession,getSession}
+export {createSession,getSessions,updateSession,deleteSession,getSession,getCount}

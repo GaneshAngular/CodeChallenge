@@ -54,6 +54,18 @@ const getProjects = async (req, res) => {
     }
 
 }
+const getCount=async (req, res) => {
+    try {
+        
+        const project = await projectModel.countDocuments()
+     
+        return res.json({count: project})
+    } catch (error) {
+        console.log(error)
+        return res.status(500).json({ message: "Servr Error" })
+    }
+ 
+}
 
 const getProject = async (req, res) => {
     try {
@@ -124,4 +136,4 @@ const deleteProject = async (req, res) => {
     }
 }
 
-export { createProject, getProjects, updateProject, deleteProject, getProject }
+export { createProject, getProjects, updateProject, deleteProject, getProject,getCount }

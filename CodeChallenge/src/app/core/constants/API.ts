@@ -10,6 +10,7 @@ const SESSION_API={
 
 const CODE_CHALLENGE_URL=location.origin+'/live/challenge'
 const TRACK_CODE_URL=location.origin+'/track-session'
+
 const PROJECT_API={
   api:'/api/project'
 }

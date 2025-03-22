@@ -18,6 +18,9 @@ export class ProjectService {
   getProject(id:string){
     return this.httpService.get(PROJECT_API.api+"/"+id)
   }
+  getCount(){
+    return this.httpService.get(PROJECT_API.api+"/count")
+  }
 
   createProject(data:any) {
       return this.httpService.post(PROJECT_API.api, data);
