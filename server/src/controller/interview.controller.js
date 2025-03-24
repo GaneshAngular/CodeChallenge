@@ -16,6 +16,15 @@ const createInterview = async (req, res) => {
         return res.status(500).json({ message: "Server Error" })
     }
 }
+const getCount=async (req, res) => {
+      try {
+          const interview = await interviewModel.countDocuments()
+          return res.json({count: interview})
+      } catch (error) {
+          console.log(error)
+          return res.status(500).json({ message: "Server Error" })
+      }
+}
 
 const getAllInterviews = async (req, res) => {
     const page = parseInt(req.query.page) || 1;  
@@ -104,4 +113,4 @@ const deleteInterview=async(req, res) => {
 
 }
 
-export{createInterview, deleteInterview, updateInterview, getInterview,getAllInterviews,updateInterviewSessions}
+export{createInterview, deleteInterview, updateInterview, getInterview,getAllInterviews,updateInterviewSessions,getCount}

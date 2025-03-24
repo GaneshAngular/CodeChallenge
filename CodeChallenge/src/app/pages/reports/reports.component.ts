@@ -23,6 +23,7 @@ export class ReportsComponent {
   sessionService=inject(SessionService)
   projectService=inject(ProjectService)
   limit=5
+  interviewsCount=0
   trackSessionUrl=TRACK_CODE_URL
   page=1
   totalpages=1
@@ -40,6 +41,9 @@ export class ReportsComponent {
     });
     this.sessionService.getCount().subscribe((res:any) => {
       this.sessions = res.count;
+    });
+    this.interviewService.getCount().subscribe((res:any) => {
+      this.interviewsCount = res.count;
     });
   }
   // Filter interviews based on search input

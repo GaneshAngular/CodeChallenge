@@ -29,4 +29,7 @@ export class InterviewerService {
   deleteInterview(params:HttpParams){
      return this.httpService.delete(INTERVIEW_API.api,params)
   }
+  getCount(){
+    return this.httpService.get(INTERVIEW_API.api+"/count")
+  }
 }
