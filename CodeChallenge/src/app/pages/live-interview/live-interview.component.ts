@@ -59,7 +59,7 @@ export class LiveInterviewComponent implements OnInit {
     this.socketService.getResponse('update-interview').subscribe((data: any) => {
       this.loadInterview(id)
     })
-
+  this.updateInterview(id)
 
 
     this.socketService.getResponse('stream').subscribe((stream: any) => {
@@ -127,11 +127,17 @@ export class LiveInterviewComponent implements OnInit {
     })
   }
 
-
+   updateInterview(id:string) {
+       this.interviewService.updateInterview({status:"in-progress"},new HttpParams().set('id',id)).subscribe((res:any)=>{})
+   }
 
   loadInterview(id: string) {
     this.interviewService.getInterview(id).subscribe((res: any) => {
       this.interview = res
+
+      if(res.status=='completed')
+         this.router.navigate(['/response/SessionEnd'])
+
       this.loadProjects()
       this.socketService.sendData('join',this.interview.createdBy)
     }, (err: any) => {
@@ -169,7 +175,7 @@ export class LiveInterviewComponent implements OnInit {
     const params = new HttpParams().set('id', this.interview._id)
     this.interviewService.updateInterview({ status: "completed" }, params).subscribe((res: any) => {
       this.alertService.toast("success",res.message)
-      this.router.navigate(['/api/dashboard/interviews'])
+      this.router.navigate(['/dashboard/interviews'])
     })
   }
 

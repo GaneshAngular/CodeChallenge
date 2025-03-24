@@ -1,18 +1,18 @@
-<div class="container px-5">
+<div class="container px-5 bg-inherit">
   <!-- Page Header -->
   <h1 class="text-3xl font-bold mb-6">Report Dashboard</h1>
 
   <!-- Summary Cards -->
   <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-6">
-      <div class="bg-inherit p-6 rounded-lg shadow-lg shadow-gray-500">
+      <div class="bg-inherit p-6 rounded-lg shadow-md shadow-gray-500">
           <h2 class="text-xl font-semibold">Interviews</h2>
           <p class="text-2xl font-bold">{{interviews?.length}}</p>
       </div>
-      <div class="bg-inherit p-6 rounded-lg shadow-lg shadow-gray-500">
+      <div class="bg-inherit p-6 rounded-lg shadow-md shadow-gray-500">
           <h2 class="text-xl font-semibold">Challenge Sessions</h2>
           <p class="text-2xl font-bold">{{sessions}}</p>
       </div>
-      <div class="bg-inherit p-6 rounded-lg shadow-lg shadow-gray-500">
+      <div class="bg-inherit p-6 rounded-lg shadow-md shadow-gray-500">
           <h2 class="text-xl font-semibold">Projects</h2>
           <p class="text-2xl font-bold">{{projects}}</p>
       </div>
@@ -20,7 +20,7 @@
 
   <!-- Reports Table -->
   <div class="max-w-6xl mx-auto p-6 bg-inherit shadow-md rounded-lg mt-10">
-    <div class="flex justify-between items-center mb-6">
+    <div class="flex bg-inherit justify-between items-center mb-6">
       <div>
         <input
           type="text"
@@ -29,6 +29,15 @@
           placeholder="Search Interviews"
           (keyup)="loadInterviews()"
         />
+      </div>
+      <div class="bg-inherit">
+        <label class="text-2xl" for="sort">Sort:</label>
+        <select class="p-1 bg-transparent border border-gray-400" name="sort" [(ngModel)]="sort" (change)="loadInterviews()">
+          <option class="bg-transparent" value="All">All</option>
+          <option class="bg-transparent" value="completed">Completed</option>
+         <option class="bg-transparent" value="in-progress">In-Progress</option>
+         <option class="bg-transparent" value="inactive">Not Started</option>
+        </select>
       </div>
       <!-- <button
         (click)="sortInterviews()"
@@ -39,11 +48,19 @@
     </div>
 
     <div class="bg-inherit  p-4 mb-4 rounded-lg shadow-gray-500 shadow-md" *ngIf="totalpages===0" >
-         <h2 >No Interviews FOund</h2>
+         <h2 >No Interviews Found</h2>
     </div>
     <div *ngFor="let interview of interviews">
-      <div class="bg-inherit  p-4 mb-4 rounded-lg shadow-gray-500 shadow-md">
-        <h3 class="text-xl font-semibold interview-title">{{ interview.candidateName }}</h3>
+      <div class="bg-inherit  p-4 mb-4 rounded-lg shadow-gray-500 shadow-md ">
+        <div class="flex justify-between">
+          <h3 class="text-xl font-semibold interview-title">{{ interview.candidateName }}</h3>
+          <span class="inline-block px-2 py-1 rounded-full text-xs
+          {{interview?.status === 'completed' ? 'bg-green-100 text-green-800' :
+            interview?.status === 'inactive' ? 'bg-gray-100 text-gray-800' :
+            'bg-blue-100 text-blue-800'}}">
+          {{interview?.status === 'inactive' ? 'Not Started' : interview?.status}}
+        </span>
+        </div>
         <ul class="mt-4 space-y-2">
           <li *ngFor="let challenge of interview.sessions" class="p-2 bg-inherit rounded-lg shadow-sm flex gap-10">
               <p>{{ challenge.title }}</p>

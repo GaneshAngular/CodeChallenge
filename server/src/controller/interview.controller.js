@@ -21,7 +21,10 @@ const getAllInterviews = async (req, res) => {
     const page = parseInt(req.query.page) || 1;  
     const limit = parseInt(req.query.limit) || 10;  
     const skip = (page - 1) * limit;
-    const searchTitle = req.query.title ? { candidateName: { $regex: req.query.title, $options: "i" } } : {};
+    const sort=req.query.sort||''
+    let searchTitle = req.query.title ? { candidateName: { $regex: req.query.title, $options: "i" } }:{};
+       if(sort)searchTitle['status']=sort
+
    const id=req.user._id;
     try {
         // Get total count of filtered results

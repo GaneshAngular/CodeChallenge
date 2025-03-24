@@ -28,6 +28,7 @@ export class ReportsComponent {
   totalpages=1
   projects:any
   sessions:any
+  sort:'completed'|'in-progress'|'inactive'|'All'='All'
 
   ngOnInit() {
     this.loadInterviews();
@@ -48,6 +49,9 @@ export class ReportsComponent {
      if (this.searchText) {
       params = params.set('title', this.searchText);
     }
+    if (this.sort!=='All') {
+      params = params.set('sort', this.sort);
+    }
     this.interviewService.getInterviewes(params).subscribe((res:any) => {
       this.interviews = res.interviews;
       this.totalpages = res.totalPages;
@@ -60,6 +64,7 @@ export class ReportsComponent {
   pageChange(value:any){
      this.page=value
   }
+
 
   // Sort interviews by title
   sortInterviews() {
