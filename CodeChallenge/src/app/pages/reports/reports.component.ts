@@ -63,6 +63,7 @@ export class ReportsComponent {
   }
   pageChange(value:any){
      this.page=value
+     this.loadInterviews()
   }
 
 
