@@ -19,7 +19,7 @@ const getSessions=async(req,res)=>{
     const skip = page && limit ? (page - 1) * limit : 0;
     const status=req.query.status
     let searchQuery = req.query.title 
-      ? { sessionName: { $regex: req.query.title, $options: "i" } }
+      ? { title: { $regex: req.query.title, $options: "i" } }
       : {};
       if(status)
       searchQuery.status=status
