@@ -20,7 +20,7 @@
 
   <!-- Reports Table -->
   <div class="max-w-6xl mx-auto p-6 bg-inherit shadow-md rounded-lg mt-10">
-    <div class="flex bg-inherit justify-between items-center mb-6">
+    <div class="flex  bg-inherit justify-between items-center mb-6">
       <div>
         <input
           type="text"
@@ -32,7 +32,7 @@
       </div>
       <div class="bg-inherit">
         <label class="text-2xl" for="sort">Sort:</label>
-        <select class="p-1 bg-transparent border border-gray-400" name="sort" [(ngModel)]="sort" (change)="loadInterviews()">
+        <select class="p-1 bg-transparent border border-gray-400" name="sort" id="sort" [(ngModel)]="sort" (change)="loadInterviews()">
           <option class="bg-transparent" value="All">All</option>
           <option class="bg-transparent" value="completed">Completed</option>
          <option class="bg-transparent" value="in-progress">In-Progress</option>

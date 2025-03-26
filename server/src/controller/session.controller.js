@@ -6,16 +6,11 @@ import { io } from "../services/socket.io.service.js"
 
 
 const createSession=async(req,res)=>{
-    try {
         const data={...req.body,createdBy:req.user._id}
         const session=await  sessionModel.create(data)
         if(!session) return res.status(500).json({message:"Error creating session"})
 
         return res.status(201).json({message:"Session created",data:session})
-    } catch (error) {
-        console.log(error)
-        return res.status(500).json({message:"Server Error"})
-    }
 }
 
 const getSessions=async(req,res)=>{
@@ -29,8 +24,6 @@ const getSessions=async(req,res)=>{
       if(status)
       searchQuery.status=status
 
-      
-    try {
         // Get total count of filtered results
         const totalItems = await sessionModel.countDocuments(searchQuery);
     
@@ -53,29 +46,22 @@ const getSessions=async(req,res)=>{
             totalPages: limit ? Math.ceil(totalItems / limit) : 1, // Avoid division by zero
             currentPage: page || 1
         });
-    
-    } catch (error) {
-        console.error(error);
-        return res.status(500).json({ message: "Server Error" });
-    }
+   
     
 }
 const getSession=async (req, res) => {
-        try {
+  
              const {id}=req.params
              const session=await sessionModel.findById(id).populate('project')
              
              if(!session) return res.status(404).json({message:"Session not found"})
              return res.status(200).json(session)
-        } catch (error) {
-            console.log(error)
-            return res.status(500).json({message:"Server Error"})
-        }
+      
     }
 
 
 const updateSession=async(req,res)=>{
-    try {
+
         const data=req.body
         const {id}=req.query
         const session=await sessionModel.findByIdAndUpdate(id,data,{new:true})
@@ -88,35 +74,26 @@ const updateSession=async(req,res)=>{
          else
           io.emit(id,session.code)
         return res.status(201).json({message:"Session updated",data:session})
-    } catch (error) {
-        console.log(error)
-        return res.status(500).json({message:"Server Error"})
-    }
+   
 }
 const getCount=async (req, res) => {
-    try {
+   
         
         const session = await sessionModel.countDocuments()
      
         return res.json({count: session})
-    } catch (error) {
-        console.log(error)
-        return res.status(500).json({ message: "Servr Error" })
-    }
+   
  
 }
 
 const deleteSession=async(req,res)=>{
-    try {
+    
         const {id}=req.query
         const session=await sessionModel.findByIdAndDelete(id)
         if(!session) return res.status(404).json({message:"Session not found"})
 
         return res.status(201).json({message:"Session deleted"})
-    } catch (error) {
-        console.log(error)
-        return res.status(500).json({message:"Server Error"})
-    }
+   
 }
 
 export {createSession,getSessions,updateSession,deleteSession,getSession,getCount}

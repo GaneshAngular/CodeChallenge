@@ -170,8 +170,8 @@ export class LiveInterviewComponent implements OnInit {
     })
   }
 
-  endSession() {
-    if (!this.alertService.confirm('Are you sure to end session?',"Yes,End","NO,Wait")) return
+ async endSession() {
+    if (await this.alertService.confirm('Are you sure to end session?',"Yes,End","NO,Wait")) return
     const params = new HttpParams().set('id', this.interview._id)
     this.interviewService.updateInterview({ status: "completed" }, params).subscribe((res: any) => {
       this.alertService.toast("success",res.message)

@@ -4,11 +4,11 @@ import projectRoute from "./project.routes.js";
 import sessionRoute from "./session.routes.js";
 import interviewRoute from "./interview.routes.js";
 
-const apiRoute=Router()
+const apiRoute = Router()
 
-apiRoute.use('/auth',authRoute)
-apiRoute.use('/interview',interviewRoute) 
-apiRoute.use('/project',projectRoute)
-apiRoute.use('/session',sessionRoute)
+apiRoute.use('/auth', authRoute)
+apiRoute.use('/interview', interviewRoute)
+apiRoute.use('/project', projectRoute)
+apiRoute.use('/session', sessionRoute)
 
 export default apiRoute

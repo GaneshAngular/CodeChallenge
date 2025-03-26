@@ -1,13 +1,14 @@
 
 import { Router } from 'express';
 import { createInterview, deleteInterview, getAllInterviews, getCount, getInterview, updateInterview, updateInterviewSessions } from '../controller/interview.controller.js';
+import asyncHandler from '../middleware/asyncHandler.middleware.js';
 const interviewRoute=Router()
-interviewRoute.get('/',getAllInterviews);
-interviewRoute.get('/count',getCount);
-interviewRoute.get('/:id',getInterview);
-interviewRoute.post('/',createInterview);
-interviewRoute.put('/',updateInterview);
-interviewRoute.put('/session',updateInterviewSessions);
-interviewRoute.delete('/',deleteInterview);
+interviewRoute.get('/',asyncHandler(getAllInterviews));
+interviewRoute.get('/count',asyncHandler(getCount));
+interviewRoute.get('/:id',asyncHandler(getInterview));
+interviewRoute.post('/',asyncHandler(createInterview));
+interviewRoute.put('/',asyncHandler(updateInterview));
+interviewRoute.put('/session',asyncHandler(updateInterviewSessions));
+interviewRoute.delete('/',asyncHandler(deleteInterview));
 
 export default interviewRoute;

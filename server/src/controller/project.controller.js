@@ -2,17 +2,12 @@
 import projectModel from '../models/project.model.js';
 
 const createProject = async (req, res) => {
-    try {
         const data={...req.body,createdBy:req.user._id}
         const project = await projectModel.create(data)
         if (!project) return res.status(500).json({ message: "Error creating project" })
 
         return res.status(201).json({ message: "Project created" })
 
-    } catch (error) {
-        console.log(error)
-        return res.status(500).json({ message: "Servr Error" })
-    }
 }
 
 const getProjects = async (req, res) => {
@@ -24,7 +19,6 @@ const getProjects = async (req, res) => {
         : {};
 
 
-    try {
         // Get total count of filtered results
         const totalItems = await projectModel.countDocuments(searchQuery);
 
@@ -48,40 +42,25 @@ const getProjects = async (req, res) => {
             currentPage: page || 1
         });
 
-    } catch (error) {
-        console.error(error);
-        return res.status(500).json({ message: "Server Error" });
-    }
 
 }
 const getCount=async (req, res) => {
-    try {
         
         const project = await projectModel.countDocuments()
      
         return res.json({count: project})
-    } catch (error) {
-        console.log(error)
-        return res.status(500).json({ message: "Servr Error" })
-    }
  
 }
 
 const getProject = async (req, res) => {
-    try {
         const { id } = req.params
         const project = await projectModel.findById(id)
         if (!project) return res.status(404).json({ message: "Project not found" })
         return res.json(project)
-    } catch (error) {
-        console.log(error)
-        return res.status(500).json({ message: "Servr Error" })
-    }
 }
 
 const updateProject = async (req, res) => {
 
-    try {
         const data = req.body
         const { id } = req.query
         const project = await projectModel.findById(id)
@@ -91,49 +70,16 @@ const updateProject = async (req, res) => {
         if (!newProject) return res.status(500).json({ message: "Error updating project" })
 
         return res.status(201).json({ message: "Project Updated", data: newProject })
-    } catch (error) {
-        const page = parseInt(req.query.page) || 1;
-        const limit = parseInt(req.query.limit) || 10;
-        const skip = (page - 1) * limit;
-        const searchTitle = req.query.title ? { candidateName: { $regex: req.query.title, $options: "i" } } : {};
-
-        try {
-            // Get total count of filtered results
-            const totalPages = await interviewModel.countDocuments(searchTitle);
-
-            // Fetch paginated results
-            const interviews = await interviewModel.find(searchTitle)
-                .skip(skip)
-                .limit(limit)
-                .populate('sessions');
-
-            return res.json({
-                interviews,
-                totalPages,
-                totalPages: Math.ceil(totalPages / limit),
-                currentPage: page
-            });
-
-        } catch (error) {
-            console.error(error);
-            return res.status(500).json({ message: "Server Error" });
-        }
-        console.log(error)
-        return res.status(500).json({ message: "Servr Error" })
-    }
+  
+      
 }
 
 const deleteProject = async (req, res) => {
-    try {
         const { id } = req.query
         const project = await projectModel.findByIdAndDelete(id)
         if (!project) return res.status(404).json({ message: "Project not found" })
 
         return res.status(201).json({ message: "Project Deleted" })
-    } catch (error) {
-        console.log(error)
-        return res.status(500).json({ message: "Servr Error" })
-    }
 }
 
 export { createProject, getProjects, updateProject, deleteProject, getProject,getCount }

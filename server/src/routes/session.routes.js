@@ -1,14 +1,15 @@
 import { Router } from "express";
-import { createSession, deleteSession, getSession, getSessions, updateSession,getCount } from "../controller/session.controller.js";
+import { createSession, deleteSession, getSession, getSessions, updateSession, getCount } from "../controller/session.controller.js";
+import asyncHandler from "../middleware/asyncHandler.middleware.js";
 
 
-const sessionRoute=Router()
+const sessionRoute = Router()
 
-sessionRoute.post('/',createSession)
-sessionRoute.get('/count',getCount)
-sessionRoute.get('/:id',getSession) 
-sessionRoute.get('/',getSessions)
-sessionRoute.put('/',updateSession)
-sessionRoute.delete('/',deleteSession)
+sessionRoute.post('/', asyncHandler(createSession))
+sessionRoute.get('/count', asyncHandler(getCount))
+sessionRoute.get('/:id', asyncHandler(getSession))
+sessionRoute.get('/', asyncHandler(getSessions))
+sessionRoute.put('/', asyncHandler(updateSession))
+sessionRoute.delete('/', asyncHandler(deleteSession))
 
 export default sessionRoute
