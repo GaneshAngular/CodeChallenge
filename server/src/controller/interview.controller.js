@@ -1,3 +1,4 @@
+import redisClient from "../config/redis.config.js"
 import interviewModel from "../models/interview.model.js"
 
 import { io } from "../services/socket.io.service.js"
@@ -33,13 +34,16 @@ const getAllInterviews = async (req, res) => {
             .skip(skip)
             .limit(limit)
             .populate('sessions');
-    
-        return res.json({
-            interviews,
-            totalPages,
-            totalPages: Math.ceil(totalPages / limit),
-            currentPage: page
-        });
+            const cacheKey=req.originalUrl
+            console.log("---->",req.originalUrl)
+            const response={
+                interviews,
+                totalPages,
+                totalPages: Math.ceil(totalPages / limit),
+                currentPage: page
+            }
+         await  redisClient.setEx(cacheKey,120,JSON.stringify(response))
+        return res.json(response);
     
        ;
     
@@ -50,6 +54,9 @@ const getInterview = async (req, res) => {
         const interview = await interviewModel.findById(id).populate({path:'sessions',populate:{path:'project'}})
         if (!interview) return res.status(404).json({ message: "Interview not found" })
         
+            const cacheKey=req.originalUrl
+            console.log("---->",req.originalUrl)
+         await  redisClient.setEx(cacheKey,120,JSON.stringify(interview))
         return res.json(interview)
 }
 

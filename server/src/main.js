@@ -7,6 +7,7 @@ import { getSocketServer } from './services/socket.io.service.js';
 import authenticationMiddleware from './middleware/authentication.middleware.js';
 import logsMiddleware from './middleware/logs.middleware.js';
 import errorHandler from './middleware/errorHandler.middleware.js';
+import checkCache from './middleware/checkCache.middleware.js';
 const app = express()
 const { server, io } = await getSocketServer(app)
 
@@ -17,7 +18,7 @@ app.use(cors())
 app.use(express.json({ limit: '50mb' }))
 app.use(express.urlencoded({ extended: true, limit: '50mb' }))
 app.use(errorHandler)
-
+app.use(checkCache)
 app.get('/welcome', (req, res) => {
 
     return res.json({ message: "Welcome " })

@@ -1,3 +1,4 @@
+import redisClient from "../config/redis.config.js"
 import sessionModel from "../models/session.model.js"
 import { io } from "../services/socket.io.service.js"
 
@@ -23,7 +24,7 @@ const getSessions=async(req,res)=>{
       : {};
       if(status)
       searchQuery.status=status
-
+ 
         // Get total count of filtered results
         const totalItems = await sessionModel.countDocuments(searchQuery);
     
@@ -39,13 +40,17 @@ const getSessions=async(req,res)=>{
         if (!sessions.length) {
             return res.status(404).json({ message: "No sessions found" });
         }
-    
-        return res.json({
-            sessions,
-            totalItems,
-            totalPages: limit ? Math.ceil(totalItems / limit) : 1, // Avoid division by zero
-            currentPage: page || 1
-        });
+        const response={
+                sessions,
+                totalItems,
+                totalPages: limit ? Math.ceil(totalItems / limit) : 1, // Avoid division by zero
+                currentPage: page || 1
+            }
+        const cacheKey=req.originalUrl
+        console.log("---->",req.originalUrl)
+     await  redisClient.setEx(cacheKey,120,JSON.stringify(response))
+
+        return res.json(response);
    
     
 }

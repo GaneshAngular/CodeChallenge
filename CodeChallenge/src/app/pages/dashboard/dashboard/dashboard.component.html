@@ -1,58 +1,88 @@
-<div class="w-dvw h-screen flex flex-col text-inherit">
+<div class="w-dvw h-screen flex flex-col text-inherit bg-inherit">
   <!-- Navbar at the top -->
-  <app-nav-bar></app-nav-bar>
+  <app-nav-bar class="shadow-sm"></app-nav-bar>
 
   <!-- Main Content (Sidebar + Router Outlet) -->
-  <div class="flex flex-grow">
+  <div class="flex flex-grow overflow-hidden">
     <!-- Sidebar -->
     <div
-      class="flex flex-col gap-10 py-1 m-0 h-full text-inherit list-none items-center  min-md:w-fit text-wrap min-md:text-center border-r border-gray-300"
+      class="flex flex-col border-r border-inherit transition-all duration-300 ease-in-out bg-inherit"
+      [class.w-64]="visible"
+      [class.w-16]="!visible"
     >
-      <li class="self-start cursor-pointer text-inherit" (click)="toggleVisible()">
+      <!-- Menu Button (left-aligned) -->
+      <button
+        class="flex items-center p-4 hover:bg-gray-100 hover:text-gray-900 dark:hover:bg-gray-700 dark:hover:text-white rounded-none text-inherit transition-colors"
+        (click)="toggleVisible()"
+      >
         <svg
-          class="w-6 h-4 text-gray-800 dark:text-white"
+          class="w-6 h-6"
           aria-hidden="true"
           xmlns="http://www.w3.org/2000/svg"
-          fill="gray"
+          fill="currentColor"
           viewBox="0 0 17 14"
         >
           <path
             d="M16 2H1a1 1 0 0 1 0-2h15a1 1 0 1 1 0 2Zm0 6H1a1 1 0 0 1 0-2h15a1 1 0 1 1 0 2Zm0 6H1a1 1 0 0 1 0-2h15a1 1 0 1 1 0 2Z"
           ></path>
         </svg>
-      </li>
-      <li
-        [ngClass]="{'hidden':!visible}"
-        class="cursor-pointer hover:underline p-3 w-full"
-        routerLink="/dashboard/sessions"
-      >
-        Challenge Sessions
-      </li>
-      <li
-        [ngClass]="{'hidden':!visible}"
-        class="cursor-pointer hover:underline p-3 w-full"
-        routerLink="/dashboard/projects"
-      >
-        Projects
-      </li>
-      <li
-        [ngClass]="{'hidden':!visible}"
-        class="cursor-pointer hover:underline p-3 w-full"
-        routerLink="/dashboard/interviews"
-      >
-        Interviews
-      </li>
-      <li
-        [ngClass]="{'hidden':!visible}"
-        class="cursor-pointer hover:underline p-3 w-full"
-        routerLink="/dashboard/reports"
-      >
-        Reports
-      </li>
+        <span class="ml-3" [class.hidden]="!visible">Menu</span>
+      </button>
+
+      <!-- Navigation Links -->
+      <nav class="flex flex-col py-2">
+        <a
+          class="flex items-center px-4 py-3 hover:bg-gray-100 hover:text-gray-900 dark:hover:bg-gray-700 dark:hover:text-white transition-colors text-inherit"
+          [class.hidden]="!visible"
+          routerLink="/dashboard/sessions"
+          routerLinkActive="bg-gray-100 dark:bg-gray-700 font-medium"
+        >
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+          </svg>
+          <span class="ml-3">Challenge Sessions</span>
+        </a>
+
+        <a
+          class="flex items-center px-4 py-3 hover:bg-gray-100 hover:text-gray-900 dark:hover:bg-gray-700 dark:hover:text-white transition-colors text-inherit"
+          [class.hidden]="!visible"
+          routerLink="/dashboard/projects"
+          routerLinkActive="bg-gray-100 dark:bg-gray-700 font-medium"
+        >
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
+          </svg>
+          <span class="ml-3">Projects</span>
+        </a>
+
+        <a
+          class="flex items-center px-4 py-3 hover:bg-gray-100 hover:text-gray-900 dark:hover:bg-gray-700 dark:hover:text-white transition-colors text-inherit"
+          [class.hidden]="!visible"
+          routerLink="/dashboard/interviews"
+          routerLinkActive="bg-gray-100 dark:bg-gray-700 font-medium"
+        >
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z" />
+          </svg>
+          <span class="ml-3">Interviews</span>
+        </a>
+
+        <a
+          class="flex items-center px-4 py-3 hover:bg-gray-100 hover:text-gray-900 dark:hover:bg-gray-700 dark:hover:text-white transition-colors text-inherit"
+          [class.hidden]="!visible"
+          routerLink="/dashboard/reports"
+          routerLinkActive="bg-gray-100 dark:bg-gray-700 font-medium"
+        >
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+          </svg>
+          <span class="ml-3">Reports</span>
+        </a>
+      </nav>
     </div>
 
     <!-- Main Content Area -->
-    <div class="w-9/12 h-full">
+    <div class="flex-1 overflow-auto p-6 bg-inherit">
       <router-outlet></router-outlet>
     </div>
   </div>
