@@ -35,14 +35,14 @@ const getAllInterviews = async (req, res) => {
             .limit(limit)
             .populate('sessions');
             const cacheKey=req.originalUrl
-            console.log("---->",req.originalUrl)
+           
             const response={
                 interviews,
                 totalPages,
                 totalPages: Math.ceil(totalPages / limit),
                 currentPage: page
             }
-         await  redisClient.setEx(cacheKey,120,JSON.stringify(response))
+         await  redisClient.setEx(cacheKey,3600,JSON.stringify(response))
         return res.json(response);
     
        ;
@@ -55,8 +55,8 @@ const getInterview = async (req, res) => {
         if (!interview) return res.status(404).json({ message: "Interview not found" })
         
             const cacheKey=req.originalUrl
-            console.log("---->",req.originalUrl)
-         await  redisClient.setEx(cacheKey,120,JSON.stringify(interview))
+        
+         await  redisClient.setEx(cacheKey,3600,JSON.stringify(interview))
         return res.json(interview)
 }
 

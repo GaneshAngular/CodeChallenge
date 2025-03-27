@@ -47,8 +47,8 @@ const getSessions=async(req,res)=>{
                 currentPage: page || 1
             }
         const cacheKey=req.originalUrl
-        console.log("---->",req.originalUrl)
-     await  redisClient.setEx(cacheKey,120,JSON.stringify(response))
+       
+     await  redisClient.setEx(cacheKey,3600,JSON.stringify(response))
 
         return res.json(response);
    
@@ -60,6 +60,10 @@ const getSession=async (req, res) => {
              const session=await sessionModel.findById(id).populate('project')
              
              if(!session) return res.status(404).json({message:"Session not found"})
+
+             
+                const cacheKey=req.originalUrl
+             await  redisClient.setEx(cacheKey,3600,JSON.stringify(session))
              return res.status(200).json(session)
       
     }

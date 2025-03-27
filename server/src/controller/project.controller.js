@@ -37,14 +37,14 @@ const getProjects = async (req, res) => {
         }
 
         const cacheKey = req.originalUrl
-        console.log("---->", req.originalUrl)
+       
         const response = {
                 projects,
                 totalItems,
                 totalPages: limit ? Math.ceil(totalItems / limit) : 1, // Avoid division by zero
                 currentPage: page || 1
         }
-        await redisClient.setEx(cacheKey, 120, JSON.stringify(response))
+        await redisClient.setEx(cacheKey, 3600, JSON.stringify(response))
 
         return res.json(response);
 
@@ -64,9 +64,9 @@ const getProject = async (req, res) => {
         if (!project) return res.status(404).json({ message: "Project not found" })
 
         const cacheKey = req.originalUrl
-        console.log("---->", req.originalUrl)
+  
 
-        await redisClient.setEx(cacheKey, 120, JSON.stringify(project))
+        await redisClient.setEx(cacheKey, 3600, JSON.stringify(project))
         return res.json(project)
 }
 
