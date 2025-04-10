@@ -25,7 +25,7 @@ app.get('/welcome', (req, res) => {
 })
 
 
-app.use('/api', authenticationMiddleware,logsMiddleware, apiRoute)
+app.use('/api', authenticationMiddleware, apiRoute)
 
 server.listen(process.env.PORT, () => {
     console.log(`server listening on ${process.env.PORT}`)
